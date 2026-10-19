@@ -1,0 +1,2751 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>TeleMirror Pro • Telegram Bot Admin & Cloud Mirror Hub</title>
+  
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      plugins: [
+        function({ addVariant }) {
+          addVariant('light', 'html.light &');
+          addVariant('light-hover', 'html.light &:hover');
+          addVariant('light-focus', 'html.light &:focus');
+        }
+      ],
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfeff',
+              100: '#cffafe',
+              400: '#22d3ee',
+              500: '#06b6d4',
+              600: '#0891b2',
+              700: '#0e7490',
+            },
+            accent: {
+              purple: '#a855f7',
+              emerald: '#10b981',
+              rose: '#f43f5e',
+              amber: '#f59e0b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    input, textarea, pre, code {
+      user-select: text;
+    }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Ambient Backgrounds */
+    .dark .app-bg {
+      background-color: #090d16;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(14, 116, 144, 0.08) 0px, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+    }
+
+    .light .app-bg {
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.07) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.07) 0px, transparent 50%),
+        linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+    }
+
+    /* Glassmorphism Cards */
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .light .glass-card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    .glass-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .light .glass-nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .glass-sidebar {
+      background: rgba(10, 15, 29, 0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .light .glass-sidebar {
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid #e2e8f0;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .glass-dock {
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .light .glass-dock {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Complete Light Mode Contrast Overrides */
+    html.light {
+      color-scheme: light;
+    }
+    html.light body {
+      color: #0f172a;
+    }
+    html.light input[type="text"],
+    html.light input[type="password"],
+    html.light input[type="number"],
+    html.light textarea,
+    html.light select {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+    html.light input::placeholder,
+    html.light textarea::placeholder {
+      color: #94a3b8 !important;
+    }
+    html.light input:focus,
+    html.light textarea:focus,
+    html.light select:focus {
+      border-color: #0891b2 !important;
+      outline: none !important;
+      box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.2) !important;
+    }
+    html.light .text-white {
+      color: #0f172a !important;
+    }
+    html.light .text-gray-200,
+    html.light .text-gray-300 {
+      color: #1e293b !important;
+    }
+    html.light .text-gray-400 {
+      color: #475569 !important;
+    }
+    html.light .text-gray-500 {
+      color: #64748b !important;
+    }
+    html.light .bg-gray-900,
+    html.light .bg-gray-900\/80,
+    html.light .bg-gray-900\/90,
+    html.light .bg-gray-900\/60,
+    html.light .bg-gray-800,
+    html.light .bg-gray-800\/80,
+    html.light .bg-gray-800\/90 {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.light .border-gray-800,
+    html.light .border-gray-700,
+    html.light .border-gray-700\/80,
+    html.light .border-white\/5,
+    html.light .border-white\/10 {
+      border-color: #e2e8f0 !important;
+    }
+    html.light #simOutputPreview {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+    html.light #renderEnvOutput {
+      background-color: #090d16 !important;
+      color: #34d399 !important;
+    }
+    html.light #logTerminal {
+      background-color: #090d16 !important;
+      color: #f1f5f9 !important;
+      border: 1px solid #1e293b !important;
+    }
+    html.light .nav-item {
+      color: #475569;
+    }
+    html.light .nav-item:hover {
+      color: #0f172a;
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    html.light .nav-item.text-cyan-400 {
+      color: #0891b2 !important;
+      background-color: rgba(8, 145, 178, 0.12) !important;
+    }
+    html.light .mobile-dock-item.text-gray-400 {
+      color: #64748b !important;
+    }
+    html.light .mobile-dock-item.active {
+      color: #0891b2 !important;
+      background-color: rgba(8, 145, 178, 0.12) !important;
+    }
+    html.light #botStatusBadge {
+      background-color: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 4px; }
+
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 1.25rem);
+    }
+    .pt-safe {
+      padding-top: env(safe-area-inset-top, 0.5rem);
+    }
+  </style>
+</head>
+<body class="app-bg text-gray-100 min-h-screen flex antialiased transition-colors duration-300">
+
+  <!-- ================= DESKTOP / TABLET SIDEBAR NAVIGATION ================= -->
+  <aside id="desktopSidebar" class="hidden md:flex flex-col w-64 glass-sidebar fixed inset-y-0 left-0 z-40 transition-all duration-300">
+    <!-- Sidebar Brand -->
+    <div class="p-5 flex items-center gap-3 border-b border-white/5 light:border-black/5">
+      <div class="relative group cursor-pointer" onclick="switchTab('tabOverview')">
+        <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+        <div class="relative w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center text-cyan-400">
+          <i class="fa-solid fa-paper-plane text-base"></i>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-extrabold text-base tracking-tight text-white light:text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-teal-300 to-purple-400">
+            TeleMirror
+          </span>
+          <span class="text-[9px] uppercase font-black tracking-wider px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+            PRO
+          </span>
+        </div>
+        <p class="text-[10px] text-gray-400 light:text-gray-600">Telegram Cloud Hub</p>
+      </div>
+    </div>
+
+    <!-- Navigation Menu Items -->
+    <nav class="flex-1 p-3 space-y-1.5 overflow-y-auto custom-scrollbar">
+      <button onclick="switchTab('tabOverview')" class="nav-item w-full px-3.5 py-2.5 rounded-2xl flex items-center gap-3 text-xs font-bold transition text-cyan-400 bg-cyan-500/15" data-tab="tabOverview">
+        <i class="fa-solid fa-chart-pie w-4 text-center"></i>
+        <span>Overview & Hub</span>
+      </button>
+
+      <button onclick="switchTab('tabChannels')" class="nav-item w-full px-3.5 py-2.5 rounded-2xl flex items-center gap-3 text-xs font-semibold text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 hover:bg-white/5 light:hover:bg-black/5 transition" data-tab="tabChannels">
+        <i class="fa-solid fa-network-wired w-4 text-center text-cyan-400"></i>
+        <span>Channels & Routing</span>
+      </button>
+
+      <button onclick="switchTab('tabCustomizer')" class="nav-item w-full px-3.5 py-2.5 rounded-2xl flex items-center gap-3 text-xs font-semibold text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 hover:bg-white/5 light:hover:bg-black/5 transition" data-tab="tabCustomizer">
+        <i class="fa-solid fa-wand-magic-sparkles w-4 text-center text-purple-400"></i>
+        <span>Message Customizer</span>
+      </button>
+
+      <button onclick="switchTab('tabSimulator')" class="nav-item w-full px-3.5 py-2.5 rounded-2xl flex items-center gap-3 text-xs font-semibold text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 hover:bg-white/5 light:hover:bg-black/5 transition" data-tab="tabSimulator">
+        <i class="fa-solid fa-vial w-4 text-center text-emerald-400"></i>
+        <span>Post Simulator</span>
+      </button>
+
+      <button onclick="switchTab('tabLogs')" class="nav-item w-full px-3.5 py-2.5 rounded-2xl flex items-center gap-3 text-xs font-semibold text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 hover:bg-white/5 light:hover:bg-black/5 transition" data-tab="tabLogs">
+        <i class="fa-solid fa-terminal w-4 text-center text-amber-400"></i>
+        <span>Live Logs Terminal</span>
+      </button>
+
+      <button onclick="switchTab('tabSettings')" class="nav-item w-full px-3.5 py-2.5 rounded-2xl flex items-center gap-3 text-xs font-semibold text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 hover:bg-white/5 light:hover:bg-black/5 transition" data-tab="tabSettings">
+        <i class="fa-solid fa-sliders w-4 text-center text-blue-400"></i>
+        <span>System Credentials</span>
+      </button>
+
+      <button onclick="switchTab('tabRenderSync')" class="nav-item w-full px-3.5 py-2.5 rounded-2xl flex items-center gap-3 text-xs font-semibold text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 hover:bg-white/5 light:hover:bg-black/5 transition" data-tab="tabRenderSync">
+        <i class="fa-solid fa-cloud-bolt w-4 text-center text-rose-400"></i>
+        <span>Render Cloud Sync</span>
+      </button>
+    </nav>
+
+    <!-- Sidebar Bottom Telegram Status & Controls -->
+    <div class="p-4 border-t border-white/5 light:border-black/5 space-y-3">
+      <div class="p-3 rounded-2xl bg-gray-900/80 light:bg-gray-100 border border-white/5 light:border-black/5 text-xs space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] uppercase font-bold text-gray-400">Connected Account</span>
+          <span id="sideBotMode" class="text-[9px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-400 font-mono">Userbot</span>
+        </div>
+        <div id="sideAccountName" class="font-bold text-white light:text-gray-900 truncate">Loading...</div>
+        <div id="sideAccountHandle" class="text-[11px] text-cyan-400 font-mono truncate">@unknown</div>
+      </div>
+
+      <!-- Quick Control Action Row -->
+      <div class="grid grid-cols-3 gap-1.5">
+        <button onclick="startBot()" class="py-2 bg-emerald-600/80 hover:bg-emerald-600 text-white rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 active:scale-95 transition" title="Start Bot">
+          <i class="fa-solid fa-play text-[10px]"></i> Start
+        </button>
+        <button onclick="stopBot()" class="py-2 bg-rose-600/80 hover:bg-rose-600 text-white rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 active:scale-95 transition" title="Stop Bot">
+          <i class="fa-solid fa-stop text-[10px]"></i> Stop
+        </button>
+        <button onclick="restartBot()" class="py-2 bg-blue-600/80 hover:bg-blue-600 text-white rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 active:scale-95 transition" title="Restart Bot">
+          <i class="fa-solid fa-rotate text-[10px]"></i> Reset
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN WRAPPER (BODY CONTENT) ================= -->
+  <div class="flex-1 flex flex-col md:pl-64 min-w-0 min-h-screen">
+    
+    <!-- Top Navigation Bar -->
+    <header class="glass-nav sticky top-0 z-30 px-4 md:px-6 py-3 pt-safe flex items-center justify-between transition-colors">
+      <div class="flex items-center gap-3">
+        <div>
+          <h1 id="pageTitle" class="text-sm md:text-base font-extrabold text-white light:text-gray-900 tracking-tight">Overview & Bot Hub</h1>
+          <p class="text-[10px] text-gray-400 light:text-gray-600 hidden sm:block">Automated Telegram Mirroring & Content Transformation</p>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-2 md:gap-3">
+        <!-- Environment Badge -->
+        <span id="envBadge" class="hidden sm:inline text-[10px] font-black tracking-wider px-2 py-1 rounded-full border bg-emerald-500/15 text-emerald-400 border-emerald-500/30">PROD</span>
+
+        <!-- Status Pill -->
+        <div id="botStatusBadge" onclick="switchTab('tabOverview')" class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/90 light:bg-gray-200 border border-gray-700/80 light:border-gray-300 text-xs transition active:scale-95 shadow-sm">
+          <span id="statusDot" class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+          <span id="statusText" class="font-bold text-gray-300 light:text-gray-800 text-[11px]">Connecting...</span>
+        </div>
+
+        <!-- Light / Dark Theme Toggle -->
+        <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-800/80 light:bg-gray-200 border border-gray-700 light:border-gray-300 flex items-center justify-center text-gray-300 light:text-gray-700 hover:text-white transition active:scale-90" title="Toggle Theme">
+          <i id="themeIcon" class="fa-solid fa-sun text-amber-400 text-xs"></i>
+        </button>
+
+        <!-- Render Sync Quick Button -->
+        <button onclick="switchTab('tabRenderSync')" class="w-8 h-8 rounded-full bg-gradient-to-r from-rose-600 to-pink-600 text-white flex items-center justify-center shadow-lg shadow-rose-500/20 active:scale-90 transition" title="Render Cloud Sync">
+          <i class="fa-solid fa-cloud-bolt text-xs"></i>
+        </button>
+
+        <!-- Sign Out Button -->
+        <button onclick="signOut()" class="w-8 h-8 rounded-full bg-gray-800/80 light:bg-gray-200 border border-gray-700 light:border-gray-300 flex items-center justify-center text-gray-300 light:text-gray-700 hover:text-rose-400 hover:border-rose-500/30 transition active:scale-90" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket text-xs"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 pb-28 space-y-6">
+
+      <!-- ================= TAB 1: OVERVIEW ================= -->
+      <section id="tabOverview" class="tab-content space-y-5">
+        
+        <!-- Setup Required Banner (Shown if no Telegram account is logged in) -->
+        <div id="setupBanner" class="hidden rounded-3xl p-4 md:p-5 border border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/5 backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-amber-500/5">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 flex-shrink-0 mt-0.5">
+              <i class="fa-solid fa-triangle-exclamation text-base"></i>
+            </div>
+            <div>
+              <h3 class="text-xs md:text-sm font-extrabold text-white light:text-gray-900 tracking-tight">Telegram Account Setup Required</h3>
+              <p class="text-[11px] text-gray-300 light:text-gray-600 mt-0.5">
+                TeleMirror is running, but no Telegram account is connected yet. Log in via your Telegram API credentials in Settings to start mirroring.
+              </p>
+            </div>
+          </div>
+          <button onclick="switchTab('tabSettings')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black text-xs font-black shadow-md shadow-amber-500/20 active:scale-95 transition flex items-center justify-center gap-2 flex-shrink-0">
+            <i class="fa-brands fa-telegram"></i> Connect Telegram Account
+          </button>
+        </div>
+
+        <!-- Hero Card -->
+        <div class="glass-card relative overflow-hidden rounded-3xl p-5 md:p-6 border border-white/10 light:border-black/5">
+          <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1.5">
+              <div id="heroStatusPill" class="flex items-center gap-2">
+                <span id="heroStatusDot" class="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse"></span>
+                <span id="heroStatusText" class="text-[10px] md:text-xs font-black uppercase tracking-wider text-cyan-400">Loading Telegram Engine...</span>
+              </div>
+              <h2 class="text-lg md:text-2xl font-extrabold text-white light:text-gray-900 tracking-tight" id="heroGreeting">
+                TeleMirror Active Hub
+              </h2>
+              <p class="text-xs text-gray-400 light:text-gray-600 max-w-xl" id="heroSubtitle">
+                Monitoring source channels in real time and mirror-posting cleaned, customized messages to your destination channels.
+              </p>
+            </div>
+
+            <!-- Quick Engine Controls -->
+            <div class="flex items-center gap-2 flex-wrap">
+              <button id="btnStartBot" onclick="startBot()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 transition">
+                <i class="fa-solid fa-play text-[10px]"></i> <span id="btnStartBotText">Start Bot</span>
+              </button>
+              <button id="btnStopBot" onclick="stopBot()" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-rose-600/20 transition">
+                <i class="fa-solid fa-stop text-[10px]"></i> <span id="btnStopBotText">Stop</span>
+              </button>
+              <button id="btnRestartBot" onclick="restartBot()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-blue-600/20 transition">
+                <i class="fa-solid fa-rotate text-[10px]"></i> <span id="btnRestartBotText">Restart</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Stat Counters Grid -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          
+          <div class="glass-card p-4 rounded-2xl relative overflow-hidden group hover:border-cyan-500/40 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-400 light:text-gray-600">Processed</span>
+              <div class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-inbox"></i>
+              </div>
+            </div>
+            <div class="mt-2 text-2xl md:text-3xl font-black text-white light:text-gray-900 tracking-tight" id="statProcessed">0</div>
+            <div class="mt-1 text-[10px] text-gray-500 light:text-gray-600">Total incoming messages</div>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl relative overflow-hidden group hover:border-emerald-500/40 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-400 light:text-gray-600">Mirrored</span>
+              <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-paper-plane"></i>
+              </div>
+            </div>
+            <div class="mt-2 text-2xl md:text-3xl font-black text-emerald-400 tracking-tight" id="statMirrored">0</div>
+            <div class="mt-1 text-[10px] text-gray-500 light:text-gray-600 truncate" id="statMirroredSub">Last post: None yet</div>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl relative overflow-hidden group hover:border-amber-500/40 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-400 light:text-gray-600">Filtered</span>
+              <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-filter"></i>
+              </div>
+            </div>
+            <div class="mt-2 text-2xl md:text-3xl font-black text-amber-400 tracking-tight" id="statSkipped">0</div>
+            <div class="mt-1 text-[10px] text-gray-500 light:text-gray-600">Skipped by rules</div>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl relative overflow-hidden group hover:border-purple-500/40 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-400 light:text-gray-600">Channels</span>
+              <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-bullhorn"></i>
+              </div>
+            </div>
+            <div class="mt-2 text-2xl md:text-3xl font-black text-purple-400 tracking-tight" id="statActiveChannels">0 / 0</div>
+            <div class="mt-1 text-[10px] text-gray-500 light:text-gray-600 truncate" id="statChannelsSub">Live Sources / Targets</div>
+          </div>
+
+        </div>
+
+        <!-- Live Status & Image Handling Quick Status Card -->
+        <div class="glass-card p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs border border-white/10 light:border-black/5">
+          <div class="flex items-center gap-3">
+            <div id="liveEngineIconWrap" class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm flex-shrink-0">
+              <i id="liveEngineIcon" class="fa-solid fa-server"></i>
+            </div>
+            <div>
+              <div class="font-bold text-white light:text-gray-900 flex items-center gap-2 flex-wrap">
+                <span>Engine Status:</span>
+                <span id="liveStatusLabel" class="font-bold text-emerald-400">Running (Live)</span>
+                <span id="liveUptimeBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 font-mono font-bold">Uptime: 0s</span>
+              </div>
+              <div id="liveAccountSummary" class="text-[11px] text-gray-400 light:text-gray-600 mt-0.5">
+                Connected to Telegram • Live updates active
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Image Handling Status & Toggle Button -->
+          <div class="flex items-center gap-2.5 bg-gray-900/60 light:bg-gray-100 border border-gray-800 light:border-gray-200 p-2.5 rounded-xl flex-shrink-0">
+            <div class="w-7 h-7 rounded-lg bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-xs">
+              <i class="fa-regular fa-image"></i>
+            </div>
+            <div class="text-xs">
+              <div class="text-[10px] text-gray-400 light:text-gray-600">Image Handling Mode:</div>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span id="overviewImageModeBadge" class="text-[11px] font-bold text-cyan-400">Auto-Post Images</span>
+                <button onclick="toggleQuickRemoveImages()" class="px-2 py-0.5 rounded bg-gray-800 light:bg-gray-200 hover:bg-gray-700 text-gray-200 light:text-gray-800 text-[10px] font-bold transition active:scale-95">
+                  Toggle
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Shortcut Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div onclick="switchTab('tabChannels')" class="glass-card p-4 rounded-2xl cursor-pointer hover:border-cyan-500/40 active:scale-98 transition flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 text-cyan-400 flex items-center justify-center text-base">
+              <i class="fa-solid fa-network-wired"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-xs font-bold text-white light:text-gray-900">Manage Channels</div>
+              <div class="text-[11px] text-gray-400 light:text-gray-600">Configure sources & destinations</div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
+          </div>
+
+          <div onclick="switchTab('tabCustomizer')" class="glass-card p-4 rounded-2xl cursor-pointer hover:border-purple-500/40 active:scale-98 transition flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500/20 to-pink-500/20 text-purple-400 flex items-center justify-center text-base">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-xs font-bold text-white light:text-gray-900">Customize Links & Text</div>
+              <div class="text-[11px] text-gray-400 light:text-gray-600">Affiliate links & promo handles</div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
+          </div>
+
+          <div onclick="switchTab('tabRenderSync')" class="glass-card p-4 rounded-2xl cursor-pointer hover:border-rose-500/40 active:scale-98 transition flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500/20 to-pink-500/20 text-rose-400 flex items-center justify-center text-base">
+              <i class="fa-solid fa-cloud-bolt"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-xs font-bold text-white light:text-gray-900">Render Cloud Sync</div>
+              <div class="text-[11px] text-gray-400 light:text-gray-600">Export variables for deployment</div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= TAB 2: CHANNELS & ROUTING ================= -->
+      <section id="tabChannels" class="tab-content hidden space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base md:text-lg font-bold text-white light:text-gray-900">Channel Management & Routing</h2>
+            <p class="text-xs text-gray-400 light:text-gray-600">Configure where to collect posts from and where to mirror them.</p>
+          </div>
+          <button onclick="openDiscoverModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-95 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 transition">
+            <i class="fa-solid fa-compass"></i> Discover My Telegram Channels
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Source Channels Card -->
+          <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs">
+                  <i class="fa-solid fa-download"></i>
+                </div>
+                <h3 class="text-xs font-bold text-white light:text-gray-900">Sources (Collect From)</h3>
+              </div>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold" id="sourceCountBadge">0</span>
+            </div>
+
+            <div class="flex gap-2">
+              <input type="text" id="newSourceInput" placeholder="@source or -100123456789" class="flex-1 bg-gray-900/80 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl px-3 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-cyan-500">
+              <button onclick="addSourceChannel()" class="px-3.5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl active:scale-95 transition">Add</button>
+            </div>
+
+            <div id="sourcesList" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar"></div>
+          </div>
+
+          <!-- Destination Channels Card -->
+          <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">
+                  <i class="fa-solid fa-upload"></i>
+                </div>
+                <h3 class="text-xs font-bold text-white light:text-gray-900">Destinations (Post To)</h3>
+              </div>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-bold" id="destCountBadge">0</span>
+            </div>
+
+            <div class="flex gap-2">
+              <input type="text" id="newDestInput" placeholder="@target or -100987654321" class="flex-1 bg-gray-900/80 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl px-3 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-purple-500">
+              <button onclick="addDestChannel()" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl active:scale-95 transition">Add</button>
+            </div>
+
+            <div id="destList" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar"></div>
+          </div>
+
+        </div>
+
+        <div class="flex justify-end">
+          <button onclick="saveAllSettings()" class="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/20 active:scale-95 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Save Channel Routing
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: MESSAGE CUSTOMIZER ================= -->
+      <section id="tabCustomizer" class="tab-content hidden space-y-5">
+        <div>
+          <h2 class="text-base md:text-lg font-bold text-white light:text-gray-900">Message Customizer & Promotion Engine</h2>
+          <p class="text-xs text-gray-400 light:text-gray-600">Replace links, admin handles, and signatures before posting.</p>
+        </div>
+
+        <!-- 1. URL & Link Customization -->
+        <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-link"></i>
+            </div>
+            <h3 class="text-xs font-bold text-white light:text-gray-900">URL & Promotion Links</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="p-3.5 rounded-2xl bg-gray-900/60 light:bg-gray-100 border border-gray-800 light:border-gray-300 space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" id="chkReplaceAllUrls" class="w-4 h-4 rounded text-cyan-500 bg-gray-800 border-gray-700">
+                <span class="text-xs font-bold text-gray-200 light:text-gray-800">Replace ALL URLs with My Custom Link</span>
+              </label>
+              <input type="text" id="globalReplacementUrl" placeholder="https://t.me/my_promo_bot" class="w-full bg-gray-900 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl px-3 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-cyan-500">
+              <p class="text-[10px] text-gray-400 light:text-gray-600">Every link in source posts will be replaced with this link.</p>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-gray-900/60 light:bg-gray-100 border border-gray-800 light:border-gray-300 space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" id="chkRemoveAllUrls" class="w-4 h-4 rounded text-rose-500 bg-gray-800 border-gray-700">
+                <span class="text-xs font-bold text-gray-200 light:text-gray-800">Strip All Links Completely</span>
+              </label>
+              <p class="text-[10px] text-gray-400 light:text-gray-600">Removes all http, https, and t.me links from the message text.</p>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-300 light:text-gray-700">Specific URL Mapping:</span>
+              <button onclick="addUrlRuleRow()" class="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-bold">
+                <i class="fa-solid fa-plus"></i> Add Rule
+              </button>
+            </div>
+            <div id="urlRulesContainer" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- 2. Admin & Username Customization -->
+        <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-user-tag"></i>
+            </div>
+            <h3 class="text-xs font-bold text-white light:text-gray-900">Admin Username & Handles</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="p-3.5 rounded-2xl bg-gray-900/60 light:bg-gray-100 border border-gray-800 light:border-gray-300 space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" id="chkReplaceAllUsernames" class="w-4 h-4 rounded text-purple-500 bg-gray-800 border-gray-700">
+                <span class="text-xs font-bold text-gray-200 light:text-gray-800">Replace ALL Usernames with My Handle</span>
+              </label>
+              <input type="text" id="globalReplacementUsername" placeholder="@my_admin" class="w-full bg-gray-900 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl px-3 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-purple-500">
+              <p class="text-[10px] text-gray-400 light:text-gray-600">Replaces all source channel tags with your admin handle.</p>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-gray-900/60 light:bg-gray-100 border border-gray-800 light:border-gray-300 space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" id="chkRemoveAllUsernames" class="w-4 h-4 rounded text-rose-500 bg-gray-800 border-gray-700">
+                <span class="text-xs font-bold text-gray-200 light:text-gray-800">Remove All @usernames</span>
+              </label>
+              <p class="text-[10px] text-gray-400 light:text-gray-600">Strips out any mentions of @channels or @users from incoming posts.</p>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-300 light:text-gray-700">Specific Username Mapping:</span>
+              <button onclick="addUsernameRuleRow()" class="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 font-bold">
+                <i class="fa-solid fa-plus"></i> Add Rule
+              </button>
+            </div>
+            <div id="usernameRulesContainer" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- 3. Header & Footer (Branding) -->
+        <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-signature"></i>
+            </div>
+            <h3 class="text-xs font-bold text-white light:text-gray-900">Branding Header & Footer</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">Custom Header (Top of post)</label>
+              <textarea id="customHeader" rows="3" placeholder="🔥 <b>VIP SIGNALS ALERT</b> 🔥" class="w-full bg-gray-900/80 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl p-3 text-xs text-white light:text-gray-900 focus:outline-none focus:border-amber-500 font-mono"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">Custom Footer (Bottom of post)</label>
+              <textarea id="customFooter" rows="3" placeholder="👉 <b>Admin:</b> @my_admin | <b>Join VIP:</b> https://t.me/mychannel" class="w-full bg-gray-900/80 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl p-3 text-xs text-white light:text-gray-900 focus:outline-none focus:border-amber-500 font-mono"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Keyword Filters -->
+        <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 class="text-xs font-bold text-white light:text-gray-900">Keyword Whitelist & Blacklist</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">Blacklist Keywords (comma separated)</label>
+              <input type="text" id="blacklistKeywords" placeholder="scam, promo, sponsor, gamble" class="w-full bg-gray-900/80 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl px-3 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-rose-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">Whitelist Keywords (comma separated)</label>
+              <input type="text" id="whitelistKeywords" placeholder="urgent, signal, announcement" class="w-full bg-gray-900/80 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl px-3 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-emerald-500">
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Image Removal & Media Filtering -->
+        <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4 border border-white/10 light:border-black/5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center text-xs">
+                <i class="fa-regular fa-image"></i>
+              </div>
+              <h3 class="text-xs font-bold text-white light:text-gray-900">Image Removal & Media Filtering</h3>
+            </div>
+            <span id="custImageBadge" class="text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold">Auto-Post Images</span>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-gray-900/60 light:bg-gray-100 border border-gray-800 light:border-gray-300 space-y-2">
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" id="chkRemoveImagesCustomizer" onchange="syncRemoveImages(this.checked)" class="w-4 h-4 rounded text-rose-500 bg-gray-800 border-gray-700">
+              <span class="text-xs font-bold text-gray-200 light:text-gray-800">Remove Images from Posts (Mirror Cleaned Caption Only)</span>
+            </label>
+            <p class="text-[10px] text-gray-400 light:text-gray-600 leading-relaxed">
+              When checked, images and photos are stripped from source messages. The bot will mirror only the transformed text caption. When unchecked, images are auto-posted as well.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button onclick="saveAllSettings()" class="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/20 active:scale-95 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Save Customizer Settings
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: SIMULATOR ================= -->
+      <section id="tabSimulator" class="tab-content hidden space-y-5">
+        <div>
+          <h2 class="text-base md:text-lg font-bold text-white light:text-gray-900">Live Post Simulator</h2>
+          <p class="text-xs text-gray-400 light:text-gray-600">Test how your custom URL, username, and branding rules transform posts.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Input -->
+          <div class="glass-card p-4 md:p-5 rounded-3xl space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold text-white light:text-gray-900 flex items-center gap-1.5">
+                <i class="fa-solid fa-file-pen text-cyan-400"></i> Original Source Message
+              </h3>
+              <div class="flex gap-1.5">
+                <button onclick="loadSampleText('promo')" class="text-[10px] px-2.5 py-1 rounded-lg bg-gray-800 light:bg-gray-200 text-gray-300 light:text-gray-700 font-semibold active:scale-95">Sample Promo</button>
+                <button onclick="loadSampleText('signal')" class="text-[10px] px-2.5 py-1 rounded-lg bg-gray-800 light:bg-gray-200 text-gray-300 light:text-gray-700 font-semibold active:scale-95">Sample Signal</button>
+              </div>
+            </div>
+            <textarea id="simInputText" rows="8" placeholder="Type or paste sample message here..." class="w-full bg-gray-900/90 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-2xl p-3 text-xs text-gray-200 light:text-gray-900 focus:outline-none focus:border-cyan-500 font-mono"></textarea>
+            
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-gray-900/60 light:bg-gray-100 border border-gray-800 light:border-gray-300">
+              <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-300 light:text-gray-700 font-semibold">
+                <input type="checkbox" id="simRemoveImages" onchange="runSimulation()" class="w-3.5 h-3.5 rounded text-rose-500 bg-gray-800 border-gray-700">
+                <span>Simulate with Images Stripped</span>
+              </label>
+              <span id="simImgStatusBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 font-mono font-bold">Auto-Post Media</span>
+            </div>
+
+            <button onclick="runSimulation()" class="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-98 text-white text-xs font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-bolt"></i> Run Simulation
+            </button>
+          </div>
+
+          <!-- Output Preview -->
+          <div class="glass-card p-4 md:p-5 rounded-3xl space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold text-white light:text-gray-900 flex items-center gap-1.5">
+                <i class="fa-solid fa-eye text-emerald-400"></i> Mirrored Output
+              </h3>
+              <div class="flex items-center gap-1.5">
+                <span id="simMediaResultBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 font-bold">🖼️ Media Preserved</span>
+                <span id="simFilterBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold">Passed Filter</span>
+              </div>
+            </div>
+            <div id="simOutputPreview" class="w-full h-56 bg-gray-950 light:bg-white border border-gray-800 light:border-gray-200 rounded-2xl p-3.5 text-xs text-gray-200 light:text-gray-900 overflow-y-auto custom-scrollbar whitespace-pre-wrap font-sans">
+              Transformed preview will appear here...
+            </div>
+            <div class="text-[10px] text-gray-400 light:text-gray-600 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-check text-emerald-400"></i> Rendered using active customizer settings.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 5: LIVE LOGS ================= -->
+      <section id="tabLogs" class="tab-content hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-base md:text-lg font-bold text-white light:text-gray-900">Live Execution Logs</h2>
+            <p class="text-xs text-gray-400 light:text-gray-600">Real-time WebSocket terminal stream.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="flex items-center gap-1.5 text-xs text-gray-400 light:text-gray-600 cursor-pointer">
+              <input type="checkbox" id="chkAutoScroll" checked class="w-3.5 h-3.5 rounded text-cyan-500 bg-gray-800 border-gray-700"> Auto-scroll
+            </label>
+            <button onclick="clearLogs()" class="px-2.5 py-1 bg-gray-800 light:bg-gray-200 text-gray-300 light:text-gray-700 text-xs font-semibold rounded-lg active:scale-95">
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <div class="glass-card p-3 rounded-3xl">
+          <div id="logTerminal" class="h-96 overflow-y-auto custom-scrollbar font-mono text-xs space-y-1 bg-black/85 light:bg-gray-950 p-4 rounded-2xl text-gray-200"></div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 6: SYSTEM & TELEGRAM ACCOUNT ================= -->
+      <section id="tabSettings" class="tab-content hidden space-y-5">
+        <div>
+          <h2 class="text-base md:text-lg font-bold text-white light:text-gray-900">System & Telegram Account</h2>
+          <p class="text-xs text-gray-400 light:text-gray-600">Connect your Telegram account, manage runtime settings, and cloud deployment options.</p>
+        </div>
+
+        <!-- Active Telegram Account Card (Visible when configured) -->
+        <div id="tgConnected" class="glass-card p-4 md:p-5 rounded-3xl space-y-4 border border-emerald-500/30 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xl shadow-md shadow-cyan-500/20 flex-shrink-0">
+                <i class="fa-brands fa-telegram"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 id="tgAccName" class="text-sm font-extrabold text-white light:text-gray-900 truncate">Telegram Account</h3>
+                  <span id="tgAccStatus" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-500/15 text-emerald-400">Connected</span>
+                  <span id="tgAccMode" class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold">Userbot</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
+                  <span id="tgAccHandle" class="font-mono text-cyan-400"></span>
+                  <span class="text-gray-600">•</span>
+                  <span id="tgAccPhone" class="font-mono text-gray-300 light:text-gray-700"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button id="tgCopySessionBtn" onclick="copySessionString()" type="button" class="px-3 py-2 bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/30 text-cyan-300 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-95 transition">
+                <i class="fa-solid fa-copy"></i> Copy Session String
+              </button>
+              <button onclick="confirmDisconnect()" type="button" class="px-3 py-2 bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/30 text-rose-300 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-95 transition">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Disconnect Account
+              </button>
+            </div>
+          </div>
+
+          <div id="tgAccError" class="hidden text-xs text-rose-300 p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 font-semibold"></div>
+        </div>
+
+        <!-- Interactive Telegram Login Wizard (Visible when unconfigured or changing account) -->
+        <div id="tgWizard" class="glass-card p-4 md:p-5 rounded-3xl space-y-5 border border-cyan-500/30">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-white/5 light:border-black/5">
+            <div>
+              <h3 class="text-xs md:text-sm font-extrabold text-white light:text-gray-900 flex items-center gap-2">
+                <i class="fa-brands fa-telegram text-cyan-400"></i> Connect Telegram Account
+              </h3>
+              <p class="text-[11px] text-gray-400 light:text-gray-600 mt-0.5">
+                Log in via your Telegram API ID & Hash to authenticate. Supports Userbot (OTP / 2FA) or Bot Token.
+              </p>
+            </div>
+
+            <!-- Stepper Progress Indicator -->
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5">
+                <div id="tgDot1" class="w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center flex-shrink-0 bg-cyan-500 text-white">1</div>
+                <span class="text-[11px] font-bold text-gray-300 light:text-gray-700 hidden sm:inline">Creds</span>
+              </div>
+              <div class="w-4 h-0.5 bg-gray-700"></div>
+              <div class="flex items-center gap-1.5">
+                <div id="tgDot2" class="w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center flex-shrink-0 bg-gray-700 text-gray-400">2</div>
+                <span class="text-[11px] font-bold text-gray-400 hidden sm:inline">Code</span>
+              </div>
+              <div class="w-4 h-0.5 bg-gray-700"></div>
+              <div class="flex items-center gap-1.5">
+                <div id="tgDot3" class="w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center flex-shrink-0 bg-gray-700 text-gray-400">3</div>
+                <span class="text-[11px] font-bold text-gray-400 hidden sm:inline">2FA</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wizard Error Banner -->
+          <div id="tgError" class="hidden p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-300 font-semibold"></div>
+
+          <!-- STEP 1: API ID, API Hash & Phone (or Bot Token) -->
+          <div id="tgStep_creds" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">
+                  Telegram API ID <span class="text-rose-400">*</span>
+                  <a href="https://my.telegram.org" target="_blank" class="text-[10px] text-cyan-400 font-normal hover:underline ml-1">(my.telegram.org)</a>
+                </label>
+                <input type="text" id="tgApiId" placeholder="e.g. 12345678" class="w-full bg-gray-900/90 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl px-3.5 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-cyan-500">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">
+                  Telegram API Hash <span class="text-rose-400">*</span>
+                </label>
+                <input type="password" id="tgApiHash" placeholder="e.g. 4e2b012..." class="w-full bg-gray-900/90 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl px-3.5 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-cyan-500">
+              </div>
+            </div>
+
+            <!-- Userbot Phone Number Login -->
+            <div class="p-4 rounded-2xl bg-gray-900/80 light:bg-gray-100 border border-cyan-500/20 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
+                  <i class="fa-solid fa-user-shield"></i> Option A: Userbot Login (Interactive Phone + OTP)
+                </span>
+                <span class="text-[10px] text-cyan-400/80 font-semibold">Recommended for private channels</span>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-gray-300 light:text-gray-700 mb-1">Phone Number (with international country code)</label>
+                <div class="flex flex-col sm:flex-row gap-2">
+                  <input type="tel" id="tgPhone" placeholder="+1234567890" class="flex-1 bg-gray-950 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl px-3.5 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-cyan-500 font-mono">
+                  <button id="tgSendBtn" onclick="tgSendCode()" type="button" class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-black rounded-xl shadow-md shadow-cyan-500/20 active:scale-95 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Send Login Code
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bot Token Login -->
+            <div class="p-4 rounded-2xl bg-gray-900/80 light:bg-gray-100 border border-purple-500/20 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+                  <i class="fa-solid fa-robot"></i> Option B: Telegram Bot Token (@BotFather)
+                </span>
+                <span class="text-[10px] text-purple-400/80 font-semibold">Instant login, no SMS</span>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-gray-300 light:text-gray-700 mb-1">Bot Token</label>
+                <div class="flex flex-col sm:flex-row gap-2">
+                  <input type="password" id="tgBotToken" placeholder="123456789:ABCdefGhIJKlmNoPQRstuVWXyz" class="flex-1 bg-gray-950 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl px-3.5 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-purple-500 font-mono">
+                  <button id="tgBotBtn" onclick="tgConnectBot()" type="button" class="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-black rounded-xl shadow-md shadow-purple-600/20 active:scale-95 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-link"></i> Connect Bot
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: Code Verification -->
+          <div id="tgStep_code" class="space-y-4 hidden">
+            <div class="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 space-y-2">
+              <div class="flex items-center gap-2 text-cyan-300 text-xs font-bold">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Enter Verification Code</span>
+              </div>
+              <p id="tgCodeHint" class="text-xs text-gray-300 light:text-gray-700">We sent a login code to your Telegram app or SMS.</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">Telegram Login Code</label>
+              <input type="text" id="tgCode" placeholder="12345" autocomplete="one-time-code" class="w-full sm:w-64 bg-gray-900/90 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-xl px-4 py-2.5 text-base text-white light:text-gray-900 focus:outline-none focus:border-cyan-500 font-mono tracking-widest">
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+              <button id="tgCodeBtn" onclick="tgVerifyCode()" type="button" class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-black rounded-xl shadow-md shadow-cyan-500/20 active:scale-95 transition flex items-center gap-2">
+                <i class="fa-solid fa-check"></i> Verify & Connect
+              </button>
+              <button onclick="tgCancel()" type="button" class="px-4 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-bold rounded-xl active:scale-95 transition">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3: 2FA Password Verification -->
+          <div id="tgStep_password" class="space-y-4 hidden">
+            <div class="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30 space-y-2">
+              <div class="flex items-center gap-2 text-purple-300 text-xs font-bold">
+                <i class="fa-solid fa-lock"></i>
+                <span>Two-Step Verification (2FA) Required</span>
+              </div>
+              <p class="text-xs text-gray-300 light:text-gray-700">Your Telegram account has cloud 2FA enabled. Enter your password below to finalize authentication.</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">Telegram 2FA Password</label>
+              <input type="password" id="tgPassword" placeholder="••••••••" autocomplete="current-password" class="w-full sm:w-80 bg-gray-900/90 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-xl px-3.5 py-2.5 text-xs text-white light:text-gray-900 focus:outline-none focus:border-purple-500">
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+              <button id="tgPasswordBtn" onclick="tgVerifyPassword()" type="button" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs font-black rounded-xl shadow-md shadow-purple-600/20 active:scale-95 transition flex items-center gap-2">
+                <i class="fa-solid fa-key"></i> Authenticate & Finish
+              </button>
+              <button onclick="tgCancel()" type="button" class="px-4 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-bold rounded-xl active:scale-95 transition">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bot Engine Settings Card -->
+        <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4 border border-white/10 light:border-black/5">
+          <h3 class="text-xs font-bold text-white light:text-gray-900 flex items-center gap-2">
+            <i class="fa-solid fa-gears text-purple-400"></i> Bot Engine Settings
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">Posting Mode</label>
+              <select id="cfgCopyMode" class="w-full bg-gray-900/80 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl px-3 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-purple-500">
+                <option value="clean_copy">Clean Copy (Fresh Post, No Forward Tag)</option>
+                <option value="forward">Native Forward</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">Action Delay (seconds)</label>
+              <input type="number" step="0.5" id="cfgActionDelay" placeholder="2.0" class="w-full bg-gray-900/80 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl px-3 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-purple-500">
+            </div>
+            <div class="flex flex-col justify-center space-y-2 pt-2">
+              <label class="flex items-center gap-2 text-xs text-gray-200 light:text-gray-800 cursor-pointer">
+                <input type="checkbox" id="cfgMirrorEdits" class="w-4 h-4 rounded text-purple-500 bg-gray-800 border-gray-700"> Sync Edited Messages
+              </label>
+              <label class="flex items-center gap-2 text-xs text-gray-200 light:text-gray-800 cursor-pointer">
+                <input type="checkbox" id="cfgAutoStart" class="w-4 h-4 rounded text-purple-500 bg-gray-800 border-gray-700"> Auto-Start on Server Launch
+              </label>
+            </div>
+          </div>
+
+          <!-- Image & Media Handling Selector -->
+          <div class="p-3.5 rounded-2xl bg-gray-900/90 light:bg-gray-100 border border-cyan-500/30 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-photo-film text-cyan-400 text-sm"></i>
+                <span class="text-xs font-bold text-white light:text-gray-900">Image & Media Handling</span>
+              </div>
+              <span id="imageModeStatusBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold">Auto-Post Images</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label class="flex items-start gap-2.5 p-3 rounded-xl bg-gray-950/60 light:bg-white border border-gray-800 light:border-gray-300 cursor-pointer hover:border-cyan-500/40 transition">
+                <input type="radio" name="imageHandlingRadio" id="radioAutoPostImages" value="false" checked onchange="onImageHandlingRadioChange(false)" class="mt-0.5 w-4 h-4 text-cyan-500">
+                <div class="text-xs">
+                  <div class="font-bold text-white light:text-gray-900">Auto-Post Images (Default)</div>
+                  <div class="text-[11px] text-gray-400 light:text-gray-600 mt-0.5">Bot mirrors photos and images attached to posts along with captions.</div>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2.5 p-3 rounded-xl bg-gray-950/60 light:bg-white border border-gray-800 light:border-gray-300 cursor-pointer hover:border-rose-500/40 transition">
+                <input type="radio" name="imageHandlingRadio" id="radioRemoveImages" value="true" onchange="onImageHandlingRadioChange(true)" class="mt-0.5 w-4 h-4 text-rose-500">
+                <div class="text-xs">
+                  <div class="font-bold text-white light:text-gray-900">Remove Images (Text / Caption Only)</div>
+                  <div class="text-[11px] text-gray-400 light:text-gray-600 mt-0.5">Bot removes/strips all images and posts only the cleaned text captions.</div>
+                </div>
+              </label>
+            </div>
+            <input type="checkbox" id="cfgRemoveImages" class="hidden">
+          </div>
+        </div>
+
+        <!-- Environment & Deployment Mode Card -->
+        <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4 border border-white/10 light:border-black/5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-white light:text-gray-900 flex items-center gap-2">
+              <i class="fa-solid fa-server text-cyan-400"></i> Runtime Environment Mode
+            </h3>
+            <span class="text-[10px] text-gray-400">Controls logging verbosity & error disclosure</span>
+          </div>
+
+          <div class="space-y-2">
+            <select id="cfgEnvironment" onchange="onEnvChange()" class="w-full bg-gray-900/80 light:bg-gray-100 border border-gray-700/80 light:border-gray-300 rounded-xl px-3 py-2 text-xs text-white light:text-gray-900 focus:outline-none focus:border-cyan-500">
+              <option value="production">Production (Recommended: quiet INFO logs, safe error responses)</option>
+              <option value="development">Development (Verbose DEBUG logs, detailed tracebacks)</option>
+            </select>
+            <p id="envHelp" class="text-[11px] text-gray-400 light:text-gray-600">
+              Production: quiet INFO logs and generic error messages. Recommended for your live Render app.
+            </p>
+          </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="flex justify-end">
+          <button onclick="saveAllSettings()" class="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/20 active:scale-95 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Save & Apply Settings
+          </button>
+        </div>
+
+        <!-- Danger Zone Card -->
+        <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4 border border-rose-500/30">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-xs font-bold text-rose-400 flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone & Factory Reset
+              </h3>
+              <p class="text-[11px] text-gray-400 light:text-gray-600 mt-1">
+                Revoke Telegram session, wipe channels, rules, statistics, and log files. Returns app to a clean, fresh install.
+              </p>
+            </div>
+            <button onclick="confirmReset()" type="button" class="px-4 py-2.5 bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 hover:text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition flex-shrink-0">
+              <i class="fa-solid fa-trash-can"></i> Reset App to Fresh
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 7: RENDER CLOUD SYNC ================= -->
+      <section id="tabRenderSync" class="tab-content hidden space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base md:text-lg font-bold text-white light:text-gray-900">Render Cloud Environment Sync</h2>
+            <p class="text-xs text-gray-400 light:text-gray-600">Export active settings directly into Render Environment Variables.</p>
+          </div>
+          <button onclick="copyRenderEnvText()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 active:scale-95 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 transition">
+            <i class="fa-solid fa-copy"></i> Copy All Render Env Vars
+          </button>
+        </div>
+
+        <!-- Render Sync Info Card -->
+        <div class="glass-card p-4 md:p-5 rounded-3xl space-y-4 border border-rose-500/30">
+          <div class="flex items-center gap-2 text-rose-400 text-xs font-bold">
+            <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+            <span>How to Update Variables on Render:</span>
+          </div>
+          <ol class="list-decimal list-inside text-xs text-gray-300 light:text-gray-700 space-y-1.5">
+            <li>Go to <a href="https://dashboard.render.com" target="_blank" class="text-cyan-400 underline font-semibold">Render Dashboard</a>.</li>
+            <li>Click on your <b>TeleMirror</b> Web Service.</li>
+            <li>Navigate to the <b>Environment</b> tab on the left menu.</li>
+            <li>Paste or update the key-value pairs shown below, then click <b>Save Changes</b>.</li>
+            <li>Render will redeploy with your new credentials in seconds!</li>
+          </ol>
+        </div>
+
+        <!-- Generated Key-Value Terminal View -->
+        <div class="glass-card p-4 rounded-3xl space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white light:text-gray-900">Render Environment Block (.env format):</span>
+            <button onclick="fetchRenderEnv()" class="text-xs text-cyan-400 font-semibold flex items-center gap-1 hover:underline">
+              <i class="fa-solid fa-rotate text-[10px]"></i> Refresh
+            </button>
+          </div>
+          <textarea id="renderEnvOutput" rows="12" readonly class="w-full bg-black/80 light:bg-gray-950 border border-gray-800 rounded-2xl p-4 text-xs font-mono text-emerald-400 focus:outline-none custom-scrollbar"></textarea>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= FLOATING ACETERNITY MOBILE DOCK ================= -->
+  <nav class="md:hidden fixed bottom-3 inset-x-0 z-40 max-w-md mx-auto px-3 pb-safe pointer-events-none">
+    <div class="glass-dock pointer-events-auto rounded-3xl p-1.5 flex items-center justify-around">
+      
+      <button onclick="switchTab('tabOverview')" class="mobile-dock-item active flex-1 py-2 px-1 flex flex-col items-center gap-1 rounded-2xl text-cyan-400 transition active:scale-90" data-tab="tabOverview">
+        <i class="fa-solid fa-chart-pie text-sm"></i>
+        <span class="text-[9px] font-bold">Hub</span>
+      </button>
+
+      <button onclick="switchTab('tabChannels')" class="mobile-dock-item flex-1 py-2 px-1 flex flex-col items-center gap-1 rounded-2xl text-gray-400 light:text-gray-500 transition active:scale-90" data-tab="tabChannels">
+        <i class="fa-solid fa-network-wired text-sm"></i>
+        <span class="text-[9px] font-bold">Channels</span>
+      </button>
+
+      <button onclick="switchTab('tabCustomizer')" class="mobile-dock-item flex-1 py-2 px-1 flex flex-col items-center gap-1 rounded-2xl text-gray-400 light:text-gray-500 transition active:scale-90" data-tab="tabCustomizer">
+        <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+        <span class="text-[9px] font-bold">Custom</span>
+      </button>
+
+      <button onclick="switchTab('tabSimulator')" class="mobile-dock-item flex-1 py-2 px-1 flex flex-col items-center gap-1 rounded-2xl text-gray-400 light:text-gray-500 transition active:scale-90" data-tab="tabSimulator">
+        <i class="fa-solid fa-vial text-sm"></i>
+        <span class="text-[9px] font-bold">Simulator</span>
+      </button>
+
+      <button onclick="switchTab('tabLogs')" class="mobile-dock-item flex-1 py-2 px-1 flex flex-col items-center gap-1 rounded-2xl text-gray-400 light:text-gray-500 transition active:scale-90" data-tab="tabLogs">
+        <i class="fa-solid fa-terminal text-sm"></i>
+        <span class="text-[9px] font-bold">Logs</span>
+      </button>
+
+      <button onclick="switchTab('tabSettings')" class="mobile-dock-item flex-1 py-2 px-1 flex flex-col items-center gap-1 rounded-2xl text-gray-400 light:text-gray-500 transition active:scale-90" data-tab="tabSettings">
+        <i class="fa-solid fa-sliders text-sm"></i>
+        <span class="text-[9px] font-bold">Settings</span>
+      </button>
+
+      <button onclick="switchTab('tabRenderSync')" class="mobile-dock-item flex-1 py-2 px-1 flex flex-col items-center gap-1 rounded-2xl text-gray-400 light:text-gray-500 transition active:scale-90" data-tab="tabRenderSync">
+        <i class="fa-solid fa-cloud-bolt text-sm"></i>
+        <span class="text-[9px] font-bold">Cloud</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- ================= DISCOVER CHANNELS MODAL ================= -->
+  <div id="discoverModal" onclick="if(event.target === this) closeDiscoverModal();" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-card max-w-xl w-full p-5 rounded-3xl space-y-4 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-bold text-white light:text-gray-900 flex items-center gap-2">
+          <i class="fa-solid fa-compass text-cyan-400"></i> Discovered Telegram Channels
+        </h3>
+        <button onclick="closeDiscoverModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="text-[11px] text-gray-400 light:text-gray-600">Click to add any channel as a Source or Destination instantly.</p>
+      
+      <div id="discoveredChannelsList" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 py-1">
+        <div class="text-center text-gray-500 text-xs py-8">Loading channels...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOAST NOTIFICATION ================= -->
+  <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-2xl bg-gray-900/95 light:bg-gray-900 border border-gray-700 text-white text-xs shadow-2xl flex items-center gap-2.5 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+    <span id="toastMsg">Saved</span>
+  </div>
+
+  <!-- ================= AUTH GATE MODAL ================= -->
+  <div id="authGate" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4 hidden">
+    <div class="glass-card max-w-md w-full p-6 md:p-8 rounded-3xl space-y-5 border border-white/10 shadow-2xl">
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-3xl bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-cyan-500/20">
+          <i class="fa-solid fa-shield-halved text-2xl"></i>
+        </div>
+        <h2 id="authTitle" class="text-lg md:text-xl font-black text-white light:text-gray-900 tracking-tight">Sign in to TeleMirror</h2>
+        <p id="authSubtitle" class="text-xs text-gray-400 light:text-gray-600">Enter your dashboard password to continue.</p>
+      </div>
+
+      <div id="authError" class="hidden p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-300 font-semibold text-center"></div>
+
+      <form onsubmit="submitAuth(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">Dashboard Password</label>
+          <input type="password" id="authPassword" class="w-full bg-gray-900/90 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-xl px-3.5 py-2.5 text-xs text-white light:text-gray-900 focus:outline-none focus:border-cyan-500" placeholder="••••••••" required>
+        </div>
+        <div id="authConfirmWrap" class="hidden">
+          <label class="block text-xs font-bold text-gray-300 light:text-gray-700 mb-1">Confirm Dashboard Password</label>
+          <input type="password" id="authConfirm" class="w-full bg-gray-900/90 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-xl px-3.5 py-2.5 text-xs text-white light:text-gray-900 focus:outline-none focus:border-cyan-500" placeholder="••••••••">
+        </div>
+        <button type="submit" id="authSubmit" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white text-xs font-black shadow-lg shadow-cyan-500/25 active:scale-95 transition flex items-center justify-center gap-2">
+          <span id="authSubmitLabel">Sign In</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= DANGER / CONFIRMATION MODAL ================= -->
+  <div id="dangerModal" onclick="if(event.target === this) closeDanger();" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="glass-card max-w-lg w-full p-6 rounded-3xl space-y-4 border border-rose-500/30 shadow-2xl">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 flex-shrink-0">
+          <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+        </div>
+        <div>
+          <h3 id="dangerTitle" class="text-sm md:text-base font-extrabold text-white light:text-gray-900">Are you sure?</h3>
+          <p id="dangerMessage" class="text-xs text-gray-300 light:text-gray-600 mt-0.5"></p>
+        </div>
+      </div>
+
+      <div id="dangerError" class="hidden p-3 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 font-semibold"></div>
+
+      <div id="dangerCheckWrap" class="hidden flex items-start gap-2.5 p-3 rounded-xl bg-gray-900/80 light:bg-gray-100 border border-gray-700">
+        <input type="checkbox" id="dangerCheck" class="mt-0.5 w-4 h-4 rounded text-rose-500 bg-gray-800 border-gray-700">
+        <label for="dangerCheck" id="dangerCheckLabel" class="text-xs text-gray-300 light:text-gray-700 cursor-pointer"></label>
+      </div>
+
+      <div id="dangerWordWrap" class="hidden space-y-1.5">
+        <label class="block text-xs font-bold text-gray-300 light:text-gray-700">
+          Type <span id="dangerWord" class="font-mono text-rose-400 font-black">RESET</span> to confirm:
+        </label>
+        <input type="text" id="dangerInput" class="w-full bg-gray-900 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-xl px-3 py-2 text-xs text-white light:text-gray-900 font-mono focus:outline-none focus:border-rose-500" placeholder="Type here...">
+      </div>
+
+      <div id="dangerResult" class="hidden p-3.5 rounded-2xl bg-gray-900/90 light:bg-gray-100 border border-gray-700 text-xs text-gray-300 light:text-gray-700 font-mono whitespace-pre-line">
+        <span id="dangerResultText"></span>
+      </div>
+
+      <div class="flex items-center justify-end gap-2.5 pt-2">
+        <button id="dangerCancelBtn" onclick="closeDanger()" type="button" class="px-4 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 light:bg-gray-200 light:hover:bg-gray-300 text-gray-300 light:text-gray-800 text-xs font-bold active:scale-95 transition">Cancel</button>
+        <button id="dangerConfirmBtn" onclick="runDanger()" type="button" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-lg shadow-rose-600/30 active:scale-95 transition flex items-center gap-1.5">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT APP LOGIC ================= -->
+  <script>
+    let globalSettings = {};
+
+    const tabTitles = {
+      'tabOverview': 'Overview & Bot Hub',
+      'tabChannels': 'Channel Management & Routing',
+      'tabCustomizer': 'Message Customizer & Promotion Engine',
+      'tabSimulator': 'Live Post Simulator',
+      'tabLogs': 'Live Execution Logs',
+      'tabSettings': 'System & Telegram Credentials',
+      'tabRenderSync': 'Render Cloud Environment Sync'
+    };
+
+    // 1. Theme Management
+    function initTheme() {
+      const savedTheme = localStorage.getItem('telemirror_theme') || 'dark';
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+        document.getElementById('themeIcon').className = 'fa-solid fa-moon text-indigo-500 text-xs';
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400 text-xs';
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+        localStorage.setItem('telemirror_theme', 'light');
+        document.getElementById('themeIcon').className = 'fa-solid fa-moon text-indigo-500 text-xs';
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('telemirror_theme', 'dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400 text-xs';
+      }
+    }
+
+    // 2. Mobile Menu
+    function toggleMobileMenu() {
+      const drawer = document.getElementById('mobileDrawer');
+      if (drawer) drawer.classList.toggle('hidden');
+    }
+
+    // 3. Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      
+      // Update sidebar nav items
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.remove('text-cyan-400', 'bg-cyan-500/15');
+        el.classList.add('text-gray-400');
+      });
+      const activeNav = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+      if (activeNav) {
+        activeNav.classList.add('text-cyan-400', 'bg-cyan-500/15');
+        activeNav.classList.remove('text-gray-400');
+      }
+
+      // Update mobile dock items
+      document.querySelectorAll('.mobile-dock-item').forEach(el => {
+        el.classList.remove('active', 'text-cyan-400', 'bg-cyan-500/15');
+        el.classList.add('text-gray-400');
+      });
+      const activeDock = document.querySelector(`.mobile-dock-item[data-tab="${tabId}"]`);
+      if (activeDock) {
+        activeDock.classList.add('active', 'text-cyan-400', 'bg-cyan-500/15');
+        activeDock.classList.remove('text-gray-400');
+      }
+
+      const target = document.getElementById(tabId);
+      if (target) {
+        target.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      const title = tabTitles[tabId] || 'TeleMirror Pro';
+      document.getElementById('pageTitle').innerText = title;
+
+      if (tabId === 'tabRenderSync') {
+        fetchRenderEnv();
+      }
+    }
+
+    // 4. Toast Notifications
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toastIcon');
+      const text = document.getElementById('toastMsg');
+      text.innerText = msg;
+      
+      if (type === 'success') {
+        icon.className = 'fa-solid fa-circle-check text-emerald-400';
+      } else if (type === 'error') {
+        icon.className = 'fa-solid fa-circle-xmark text-rose-400';
+      } else {
+        icon.className = 'fa-solid fa-circle-info text-cyan-400';
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2800);
+    }
+
+    let lastStatusData = null;
+
+    // 5. Fetch Status & Telethon State
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        updateStatusUI(data);
+      } catch (e) {
+        console.error('Status fetch error:', e);
+      }
+    }
+
+    function updateStatusUI(data) {
+      if (!data) return;
+      lastStatusData = data;
+
+      // 5.1 Header Status Pill
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      if (dot && text) {
+        if (data.status === 'running') {
+          dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow-lg shadow-emerald-500/50';
+          text.innerText = 'Running';
+          text.className = 'font-bold text-emerald-400 text-[11px]';
+        } else if (data.status === 'starting') {
+          dot.className = 'w-2 h-2 rounded-full bg-yellow-400 animate-pulse';
+          text.innerText = 'Starting...';
+          text.className = 'font-bold text-yellow-400 text-[11px]';
+        } else if (data.status === 'error') {
+          dot.className = 'w-2 h-2 rounded-full bg-rose-500';
+          text.innerText = 'Error';
+          text.className = 'font-bold text-rose-400 text-[11px]';
+        } else {
+          dot.className = 'w-2 h-2 rounded-full bg-gray-500';
+          text.innerText = 'Stopped';
+          text.className = 'font-semibold text-gray-400 text-[11px]';
+        }
+      }
+
+      // 5.2 Tab 1 Hero Card Dynamic Live Elements
+      const heroDot = document.getElementById('heroStatusDot');
+      const heroText = document.getElementById('heroStatusText');
+      if (heroDot && heroText) {
+        if (data.status === 'running') {
+          heroDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-md shadow-emerald-500/50 animate-pulse';
+          heroText.innerText = 'Live Telegram Engine • Running';
+          heroText.className = 'text-[10px] md:text-xs font-black uppercase tracking-wider text-emerald-400';
+        } else if (data.status === 'starting') {
+          heroDot.className = 'w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse';
+          heroText.innerText = 'Engine Starting...';
+          heroText.className = 'text-[10px] md:text-xs font-black uppercase tracking-wider text-yellow-400';
+        } else if (data.status === 'error') {
+          heroDot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+          heroText.innerText = `Engine Error: ${data.last_error || 'Check logs'}`;
+          heroText.className = 'text-[10px] md:text-xs font-black uppercase tracking-wider text-rose-400';
+        } else {
+          heroDot.className = 'w-2.5 h-2.5 rounded-full bg-gray-500';
+          heroText.innerText = 'Telegram Engine Offline';
+          heroText.className = 'text-[10px] md:text-xs font-black uppercase tracking-wider text-gray-400';
+        }
+      }
+
+      const heroGreeting = document.getElementById('heroGreeting');
+      if (heroGreeting) {
+        if (data.user_info && data.user_info.first_name) {
+          heroGreeting.innerText = `Welcome, ${data.user_info.first_name}`;
+        } else if (data.status === 'running') {
+          heroGreeting.innerText = 'TeleMirror Active Hub';
+        } else {
+          heroGreeting.innerText = 'TeleMirror Control Hub';
+        }
+      }
+
+      const heroSubtitle = document.getElementById('heroSubtitle');
+      if (heroSubtitle) {
+        if (data.status === 'running') {
+          const sCount = data.sources_count || 0;
+          const dCount = data.destinations_count || 0;
+          heroSubtitle.innerText = `Monitoring ${sCount} active source channel${sCount === 1 ? '' : 's'} and streaming cleaned messages to ${dCount} destination channel${dCount === 1 ? '' : 's'} in real time.`;
+        } else {
+          heroSubtitle.innerText = 'Bot engine is currently stopped. Click "Start Bot" to activate real-time channel listeners and automated mirror-posting.';
+        }
+      }
+
+      // Quick Control Buttons State
+      const btnStart = document.getElementById('btnStartBot');
+      const btnStop = document.getElementById('btnStopBot');
+      if (btnStart) {
+        const isRun = data.status === 'running' || data.status === 'starting';
+        btnStart.disabled = isRun;
+        btnStart.classList.toggle('opacity-50', isRun);
+        btnStart.classList.toggle('cursor-not-allowed', isRun);
+      }
+      if (btnStop) {
+        const isStopped = data.status === 'stopped';
+        btnStop.disabled = isStopped;
+        btnStop.classList.toggle('opacity-50', isStopped);
+        btnStop.classList.toggle('cursor-not-allowed', isStopped);
+      }
+
+      // 5.3 Live Stat Counters
+      const stats = data.stats || {};
+      const statProc = document.getElementById('statProcessed');
+      if (statProc) statProc.innerText = (stats.total_messages_processed || 0).toLocaleString();
+
+      const statMirr = document.getElementById('statMirrored');
+      if (statMirr) statMirr.innerText = (stats.total_messages_mirrored || 0).toLocaleString();
+
+      const statSkip = document.getElementById('statSkipped');
+      if (statSkip) statSkip.innerText = (stats.total_messages_skipped || 0).toLocaleString();
+
+      const statActive = document.getElementById('statActiveChannels');
+      if (statActive) statActive.innerText = `${data.sources_count || 0} / ${data.destinations_count || 0}`;
+
+      const statMirrSub = document.getElementById('statMirroredSub');
+      if (statMirrSub) {
+        statMirrSub.innerText = stats.last_mirrored_at ? `Last post: ${stats.last_mirrored_at}` : 'Last post: None yet';
+      }
+
+      const statChSub = document.getElementById('statChannelsSub');
+      if (statChSub) {
+        const cfgSrc = data.configured_sources_count ?? data.sources_count ?? 0;
+        const cfgDst = data.configured_destinations_count ?? data.destinations_count ?? 0;
+        statChSub.innerText = `${cfgSrc} src / ${cfgDst} dst configured`;
+      }
+
+      // 5.4 Live Status & Image Handling Quick Status Banner
+      const liveLabel = document.getElementById('liveStatusLabel');
+      const liveUptime = document.getElementById('liveUptimeBadge');
+      const liveAccSummary = document.getElementById('liveAccountSummary');
+      const liveIconWrap = document.getElementById('liveEngineIconWrap');
+      const liveIcon = document.getElementById('liveEngineIcon');
+
+      if (liveLabel) {
+        if (data.status === 'running') {
+          liveLabel.innerText = 'Running (Live)';
+          liveLabel.className = 'font-bold text-emerald-400';
+          if (liveIconWrap) liveIconWrap.className = 'w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm flex-shrink-0';
+          if (liveIcon) liveIcon.className = 'fa-solid fa-server';
+        } else if (data.status === 'starting') {
+          liveLabel.innerText = 'Starting...';
+          liveLabel.className = 'font-bold text-yellow-400';
+          if (liveIconWrap) liveIconWrap.className = 'w-10 h-10 rounded-xl bg-yellow-500/10 text-yellow-400 flex items-center justify-center text-sm flex-shrink-0';
+          if (liveIcon) liveIcon.className = 'fa-solid fa-spinner fa-spin';
+        } else if (data.status === 'error') {
+          liveLabel.innerText = 'Error';
+          liveLabel.className = 'font-bold text-rose-400';
+          if (liveIconWrap) liveIconWrap.className = 'w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-sm flex-shrink-0';
+          if (liveIcon) liveIcon.className = 'fa-solid fa-triangle-exclamation';
+        } else {
+          liveLabel.innerText = 'Stopped (Offline)';
+          liveLabel.className = 'font-semibold text-gray-400';
+          if (liveIconWrap) liveIconWrap.className = 'w-10 h-10 rounded-xl bg-gray-500/10 text-gray-400 flex items-center justify-center text-sm flex-shrink-0';
+          if (liveIcon) liveIcon.className = 'fa-solid fa-power-off';
+        }
+      }
+
+      if (liveUptime) {
+        liveUptime.innerText = `Uptime: ${data.uptime_str || '0s'}`;
+        if (data.status === 'running') {
+          liveUptime.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-mono font-bold';
+        } else {
+          liveUptime.className = 'text-[10px] px-2 py-0.5 rounded-full bg-gray-500/15 text-gray-400 font-mono font-bold';
+        }
+      }
+
+      if (liveAccSummary) {
+        if (data.status === 'running' && data.user_info) {
+          const u = data.user_info;
+          const handle = u.username ? '@' + u.username : 'ID: ' + u.id;
+          liveAccSummary.innerText = `Live as ${u.first_name || 'Active Bot'} (${handle}) • Connected via ${data.bot_mode === 'bot_token' ? 'Bot API' : 'Userbot MTProto'}`;
+        } else if (data.status === 'running') {
+          liveAccSummary.innerText = 'Engine active • Telegram connection verified';
+        } else {
+          liveAccSummary.innerText = 'Engine stopped • No active listeners or streams';
+        }
+      }
+
+      // 5.5 Account Details in Sidebar & Drawer
+      const modeLabel = data.bot_mode === 'bot_token' ? 'Bot Token' : 'Userbot';
+      const sideMode = document.getElementById('sideBotMode');
+      const drawerMode = document.getElementById('drawerBotBadge');
+      if (sideMode) sideMode.innerText = modeLabel;
+      if (drawerMode) drawerMode.innerText = modeLabel;
+
+      const sideName = document.getElementById('sideAccountName');
+      const sideHandle = document.getElementById('sideAccountHandle');
+      const drawerName = document.getElementById('drawerAccName');
+      const drawerUsername = document.getElementById('drawerAccUsername');
+
+      if (data.status === 'running' && data.user_info) {
+        const userStr = data.user_info.username ? '@' + data.user_info.username : 'ID: ' + data.user_info.id;
+        const displayName = data.user_info.first_name || 'Active Bot';
+        if (sideName) sideName.innerText = displayName;
+        if (sideHandle) sideHandle.innerText = userStr;
+        if (drawerName) drawerName.innerText = displayName;
+        if (drawerUsername) drawerUsername.innerText = userStr;
+      } else if (data.status === 'running') {
+        if (sideName) sideName.innerText = 'Connecting...';
+        if (sideHandle) sideHandle.innerText = '@authenticating';
+        if (drawerName) drawerName.innerText = 'Connecting...';
+        if (drawerUsername) drawerUsername.innerText = '@authenticating';
+      } else {
+        if (sideName) sideName.innerText = 'Engine Stopped';
+        if (sideHandle) sideHandle.innerText = 'Offline';
+        if (drawerName) drawerName.innerText = 'Engine Stopped';
+        if (drawerUsername) drawerUsername.innerText = 'Offline';
+      }
+
+      // 5.6 Sync Image Handling Badges
+      const removeImg = Boolean(data.remove_images);
+      syncRemoveImages(removeImg, false);
+
+      // 5.7 Refresh Channel Lists with Live Resolution Badges
+      if (globalSettings.channels) {
+        renderChannelLists(globalSettings.channels);
+      }
+    }
+
+    // Image Handling Synchronization Utility
+    function syncRemoveImages(isRemove, updateSettings = true) {
+      if (updateSettings) {
+        if (!globalSettings.bot) globalSettings.bot = {};
+        if (!globalSettings.customizations) globalSettings.customizations = {};
+        globalSettings.bot.remove_images = isRemove;
+        globalSettings.customizations.remove_images = isRemove;
+      }
+
+      // Checkboxes & Radios
+      const chkCust = document.getElementById('chkRemoveImagesCustomizer');
+      if (chkCust) chkCust.checked = isRemove;
+
+      const chkCfg = document.getElementById('cfgRemoveImages');
+      if (chkCfg) chkCfg.checked = isRemove;
+
+      const rAuto = document.getElementById('radioAutoPostImages');
+      if (rAuto) rAuto.checked = !isRemove;
+
+      const rRemove = document.getElementById('radioRemoveImages');
+      if (rRemove) rRemove.checked = isRemove;
+
+      // Badges
+      const ovBadge = document.getElementById('overviewImageModeBadge');
+      if (ovBadge) {
+        if (isRemove) {
+          ovBadge.innerText = 'Remove Images (Text Only)';
+          ovBadge.className = 'text-[11px] font-bold text-rose-400';
+        } else {
+          ovBadge.innerText = 'Auto-Post Images';
+          ovBadge.className = 'text-[11px] font-bold text-cyan-400';
+        }
+      }
+
+      const imgBadge = document.getElementById('imageModeStatusBadge');
+      if (imgBadge) {
+        if (isRemove) {
+          imgBadge.innerText = 'Remove Images';
+          imgBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-bold';
+        } else {
+          imgBadge.innerText = 'Auto-Post Images';
+          imgBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold';
+        }
+      }
+
+      const custBadge = document.getElementById('custImageBadge');
+      if (custBadge) {
+        if (isRemove) {
+          custBadge.innerText = 'Remove Images';
+          custBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-bold';
+        } else {
+          custBadge.innerText = 'Auto-Post Images';
+          custBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold';
+        }
+      }
+
+      const simImgBadge = document.getElementById('simImgStatusBadge');
+      if (simImgBadge) {
+        if (isRemove) {
+          simImgBadge.innerText = 'Images Stripped';
+          simImgBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 font-mono font-bold';
+        } else {
+          simImgBadge.innerText = 'Auto-Post Media';
+          simImgBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 font-mono font-bold';
+        }
+      }
+
+      const simChk = document.getElementById('simRemoveImages');
+      if (simChk && updateSettings) {
+        simChk.checked = isRemove;
+      }
+    }
+
+    function onImageHandlingRadioChange(isRemove) {
+      syncRemoveImages(isRemove, true);
+    }
+
+    async function toggleQuickRemoveImages() {
+      const current = Boolean(globalSettings.bot?.remove_images);
+      const next = !current;
+      syncRemoveImages(next, true);
+      showToast(next ? 'Image Removal enabled! Saving...' : 'Auto-Post Images enabled! Saving...', 'info');
+      await saveAllSettings();
+    }
+
+    // 6. Settings Fetch & Render
+    async function fetchSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        globalSettings = await res.json();
+        renderSettingsToUI(globalSettings);
+      } catch (e) {
+        console.error('Settings fetch error:', e);
+      }
+    }
+
+    function renderSettingsToUI(s) {
+      if (document.getElementById('cfgApiId')) document.getElementById('cfgApiId').value = s.telegram?.api_id || '';
+      if (document.getElementById('cfgApiHash')) document.getElementById('cfgApiHash').value = s.telegram?.api_hash || '';
+      if (document.getElementById('cfgBotToken')) document.getElementById('cfgBotToken').value = s.telegram?.bot_token || '';
+      if (document.getElementById('cfgPhone')) document.getElementById('cfgPhone').value = s.telegram?.phone_number || '';
+      if (document.getElementById('cfgSessionString')) document.getElementById('cfgSessionString').value = s.telegram?.session_string || '';
+
+      // Also prefill interactive wizard inputs if empty
+      if (byId('tgApiId') && !byId('tgApiId').value && s.telegram?.api_id) byId('tgApiId').value = s.telegram.api_id;
+      if (byId('tgPhone') && !byId('tgPhone').value && s.telegram?.phone_number) byId('tgPhone').value = s.telegram.phone_number;
+
+      // Environment selector
+      const envSelect = document.getElementById('cfgEnvironment');
+      if (envSelect && s.app?.environment) {
+        envSelect.value = s.app.environment;
+        onEnvChange();
+      }
+
+      if (document.getElementById('cfgCopyMode')) document.getElementById('cfgCopyMode').value = s.bot?.copy_mode || 'clean_copy';
+      if (document.getElementById('cfgActionDelay')) document.getElementById('cfgActionDelay').value = s.bot?.action_delay ?? 2.0;
+      if (document.getElementById('cfgMirrorEdits')) document.getElementById('cfgMirrorEdits').checked = s.bot?.mirror_edits ?? true;
+      if (document.getElementById('cfgAutoStart')) document.getElementById('cfgAutoStart').checked = s.bot?.auto_start ?? true;
+
+      // Sync image removal settings
+      const removeImagesSetting = (s.bot?.remove_images ?? s.customizations?.remove_images) || false;
+      syncRemoveImages(removeImagesSetting, true);
+
+      renderChannelLists(s.channels || {});
+
+      const cust = s.customizations || {};
+      document.getElementById('chkReplaceAllUrls').checked = cust.replace_all_urls || false;
+      document.getElementById('globalReplacementUrl').value = cust.global_replacement_url || '';
+      document.getElementById('chkRemoveAllUrls').checked = cust.remove_all_urls || false;
+
+      document.getElementById('chkReplaceAllUsernames').checked = cust.replace_all_usernames || false;
+      document.getElementById('globalReplacementUsername').value = cust.global_replacement_username || '';
+      document.getElementById('chkRemoveAllUsernames').checked = cust.remove_all_usernames || false;
+
+      document.getElementById('customHeader').value = cust.header || '';
+      document.getElementById('customFooter').value = cust.footer || '';
+      document.getElementById('blacklistKeywords').value = (cust.blacklist_keywords || []).join(', ');
+      document.getElementById('whitelistKeywords').value = (cust.whitelist_keywords || []).join(', ');
+
+      renderUrlRules(cust.url_rules || []);
+      renderUsernameRules(cust.username_rules || []);
+    }
+
+    function findResolvedChannel(identifier, list) {
+      if (!list || !Array.isArray(list)) return null;
+      let clean = String(identifier).trim().toLowerCase();
+      clean = clean.replace(/^https?:\/\/t\.me\//, '').replace(/^t\.me\//, '');
+      const noAt = clean.replace('@', '');
+      return list.find(item => {
+        if (!item) return false;
+        if (item.input && String(item.input).toLowerCase() === clean) return true;
+        if (item.key && String(item.key).toLowerCase() === clean) return true;
+        if (item.id && (String(item.id) === clean || String(item.id) === noAt || ('-100' + item.id) === clean)) return true;
+        if (item.peer_id && (String(item.peer_id) === clean || ('-100' + item.peer_id) === clean || String(item.peer_id).replace('-100', '') === noAt)) return true;
+        if (item.resolved_id && (String(item.resolved_id) === clean || ('-100' + item.resolved_id) === clean)) return true;
+        if (item.username && item.username.toLowerCase().replace('@', '') === noAt) return true;
+        return false;
+      });
+    }
+
+    function renderChannelLists(ch) {
+      const sources = ch.sources || [];
+      const dests = ch.destinations || [];
+
+      document.getElementById('sourceCountBadge').innerText = sources.length;
+      document.getElementById('destCountBadge').innerText = dests.length;
+
+      const isBotRunning = lastStatusData && lastStatusData.status === 'running';
+      const resolvedSrcs = (lastStatusData && lastStatusData.resolved_sources) || [];
+      const resolvedDests = (lastStatusData && lastStatusData.resolved_destinations) || [];
+
+      const srcContainer = document.getElementById('sourcesList');
+      srcContainer.innerHTML = sources.map((s, idx) => {
+        let statusBadgeHtml = '';
+        if (isBotRunning) {
+          const match = findResolvedChannel(s, resolvedSrcs);
+          if (match && (match.id || match.resolved_id)) {
+            const chanId = match.id || match.resolved_id;
+            const title = match.title ? `${match.title} • ` : '';
+            statusBadgeHtml = `<div class="text-[10px] text-emerald-400 font-mono mt-0.5 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block shadow-sm"></span> Live: ${title}ID ${chanId}</div>`;
+          } else {
+            statusBadgeHtml = `<div class="text-[10px] text-amber-400 font-mono mt-0.5 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block animate-pulse"></span> Connecting / Verifying...</div>`;
+          }
+        } else {
+          statusBadgeHtml = `<div class="text-[10px] text-gray-500 font-mono mt-0.5 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-gray-500 inline-block"></span> Configured (Offline)</div>`;
+        }
+
+        return `
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-gray-900/90 light:bg-gray-100 border border-gray-800 light:border-gray-200 text-xs transition">
+            <div class="min-w-0 pr-2">
+              <span class="font-mono text-cyan-400 font-bold block truncate">${s}</span>
+              ${statusBadgeHtml}
+            </div>
+            <button onclick="removeSourceChannel(${idx})" class="text-gray-500 hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-500/10 transition flex-shrink-0" title="Remove Source">
+              <i class="fa-solid fa-trash text-xs"></i>
+            </button>
+          </div>
+        `;
+      }).join('') || '<div class="text-gray-500 text-xs text-center py-4">No sources added yet.</div>';
+
+      const dstContainer = document.getElementById('destList');
+      dstContainer.innerHTML = dests.map((d, idx) => {
+        let statusBadgeHtml = '';
+        if (isBotRunning) {
+          const match = findResolvedChannel(d, resolvedDests);
+          if (match && (match.id || match.resolved_id)) {
+            const chanId = match.id || match.resolved_id;
+            const title = match.title ? `${match.title} • ` : '';
+            statusBadgeHtml = `<div class="text-[10px] text-purple-400 font-mono mt-0.5 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-purple-400 inline-block shadow-sm"></span> Live: ${title}ID ${chanId}</div>`;
+          } else {
+            statusBadgeHtml = `<div class="text-[10px] text-amber-400 font-mono mt-0.5 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block animate-pulse"></span> Connecting / Verifying...</div>`;
+          }
+        } else {
+          statusBadgeHtml = `<div class="text-[10px] text-gray-500 font-mono mt-0.5 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-gray-500 inline-block"></span> Configured (Offline)</div>`;
+        }
+
+        return `
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-gray-900/90 light:bg-gray-100 border border-gray-800 light:border-gray-200 text-xs transition">
+            <div class="min-w-0 pr-2">
+              <span class="font-mono text-purple-400 font-bold block truncate">${d}</span>
+              ${statusBadgeHtml}
+            </div>
+            <button onclick="removeDestChannel(${idx})" class="text-gray-500 hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-500/10 transition flex-shrink-0" title="Remove Destination">
+              <i class="fa-solid fa-trash text-xs"></i>
+            </button>
+          </div>
+        `;
+      }).join('') || '<div class="text-gray-500 text-xs text-center py-4">No destinations added yet.</div>';
+    }
+
+    async function addSourceChannel() {
+      const val = document.getElementById('newSourceInput').value.trim();
+      if (!val) return;
+      if (!globalSettings.channels) globalSettings.channels = { sources: [], destinations: [] };
+      if (!globalSettings.channels.sources) globalSettings.channels.sources = [];
+      const items = val.split(/[\r\n,;]+/).map(s => s.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+      let addedCount = 0;
+      for (const item of items) {
+        if (!globalSettings.channels.sources.includes(item)) {
+          globalSettings.channels.sources.push(item);
+          addedCount++;
+        }
+      }
+      document.getElementById('newSourceInput').value = '';
+      renderChannelLists(globalSettings.channels);
+      if (addedCount > 0) {
+        showToast(addedCount === 1 ? 'Source channel added! Saving...' : `${addedCount} source channels added! Saving...`, 'success');
+        await saveAllSettings();
+      }
+    }
+
+    async function removeSourceChannel(idx) {
+      globalSettings.channels.sources.splice(idx, 1);
+      renderChannelLists(globalSettings.channels);
+      showToast('Source channel removed! Saving...', 'info');
+      await saveAllSettings();
+    }
+
+    async function addDestChannel() {
+      const val = document.getElementById('newDestInput').value.trim();
+      if (!val) return;
+      if (!globalSettings.channels) globalSettings.channels = { sources: [], destinations: [] };
+      if (!globalSettings.channels.destinations) globalSettings.channels.destinations = [];
+      const items = val.split(/[\r\n,;]+/).map(s => s.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+      let addedCount = 0;
+      for (const item of items) {
+        if (!globalSettings.channels.destinations.includes(item)) {
+          globalSettings.channels.destinations.push(item);
+          addedCount++;
+        }
+      }
+      document.getElementById('newDestInput').value = '';
+      renderChannelLists(globalSettings.channels);
+      if (addedCount > 0) {
+        showToast(addedCount === 1 ? 'Destination channel added! Saving...' : `${addedCount} destination channels added! Saving...`, 'success');
+        await saveAllSettings();
+      }
+    }
+
+    async function removeDestChannel(idx) {
+      globalSettings.channels.destinations.splice(idx, 1);
+      renderChannelLists(globalSettings.channels);
+      showToast('Destination channel removed! Saving...', 'info');
+      await saveAllSettings();
+    }
+
+    function renderUrlRules(rules) {
+      const container = document.getElementById('urlRulesContainer');
+      container.innerHTML = rules.map((r, i) => `
+        <div class="flex gap-2 items-center">
+          <input type="text" placeholder="Match Link e.g. t.me/old" value="${r.match || ''}" onchange="updateUrlRule(${i}, 'match', this.value)" class="flex-1 bg-gray-900 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-xl px-3 py-1.5 text-xs text-white light:text-gray-900">
+          <span class="text-gray-500 text-xs">→</span>
+          <input type="text" placeholder="Replace with e.g. https://t.me/my_link" value="${r.replace || ''}" onchange="updateUrlRule(${i}, 'replace', this.value)" class="flex-1 bg-gray-900 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-xl px-3 py-1.5 text-xs text-white light:text-gray-900">
+          <button onclick="removeUrlRule(${i})" class="text-gray-500 hover:text-rose-400 p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
+        </div>
+      `).join('');
+    }
+
+    function addUrlRuleRow() {
+      if (!globalSettings.customizations) globalSettings.customizations = {};
+      if (!globalSettings.customizations.url_rules) globalSettings.customizations.url_rules = [];
+      globalSettings.customizations.url_rules.push({ match: '', replace: '' });
+      renderUrlRules(globalSettings.customizations.url_rules);
+    }
+
+    function updateUrlRule(idx, field, val) {
+      globalSettings.customizations.url_rules[idx][field] = val;
+    }
+
+    function removeUrlRule(idx) {
+      globalSettings.customizations.url_rules.splice(idx, 1);
+      renderUrlRules(globalSettings.customizations.url_rules);
+    }
+
+    function renderUsernameRules(rules) {
+      const container = document.getElementById('usernameRulesContainer');
+      container.innerHTML = rules.map((r, i) => `
+        <div class="flex gap-2 items-center">
+          <input type="text" placeholder="Match @old_admin" value="${r.match || ''}" onchange="updateUsernameRule(${i}, 'match', this.value)" class="flex-1 bg-gray-900 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-xl px-3 py-1.5 text-xs text-white light:text-gray-900">
+          <span class="text-gray-500 text-xs">→</span>
+          <input type="text" placeholder="Replace @my_admin" value="${r.replace || ''}" onchange="updateUsernameRule(${i}, 'replace', this.value)" class="flex-1 bg-gray-900 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-xl px-3 py-1.5 text-xs text-white light:text-gray-900">
+          <button onclick="removeUsernameRule(${i})" class="text-gray-500 hover:text-rose-400 p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
+        </div>
+      `).join('');
+    }
+
+    function addUsernameRuleRow() {
+      if (!globalSettings.customizations) globalSettings.customizations = {};
+      if (!globalSettings.customizations.username_rules) globalSettings.customizations.username_rules = [];
+      globalSettings.customizations.username_rules.push({ match: '', replace: '' });
+      renderUsernameRules(globalSettings.customizations.username_rules);
+    }
+
+    function updateUsernameRule(idx, field, val) {
+      globalSettings.customizations.username_rules[idx][field] = val;
+    }
+
+    function removeUsernameRule(idx) {
+      globalSettings.customizations.username_rules.splice(idx, 1);
+      renderUsernameRules(globalSettings.customizations.username_rules);
+    }
+
+    async function saveAllSettings() {
+      if (!globalSettings.telegram) globalSettings.telegram = {};
+      if (document.getElementById('cfgApiId')) globalSettings.telegram.api_id = document.getElementById('cfgApiId').value.trim();
+      if (document.getElementById('cfgApiHash')) globalSettings.telegram.api_hash = document.getElementById('cfgApiHash').value.trim();
+      if (document.getElementById('cfgBotToken')) globalSettings.telegram.bot_token = document.getElementById('cfgBotToken').value.trim();
+      if (document.getElementById('cfgPhone')) globalSettings.telegram.phone_number = document.getElementById('cfgPhone').value.trim();
+      if (document.getElementById('cfgSessionString')) globalSettings.telegram.session_string = document.getElementById('cfgSessionString').value.trim();
+
+      // Read image removal option from active inputs
+      const removeImagesSetting = document.getElementById('cfgRemoveImages')?.checked || 
+                                  document.getElementById('chkRemoveImagesCustomizer')?.checked || 
+                                  document.getElementById('radioRemoveImages')?.checked || false;
+
+      if (!globalSettings.bot) globalSettings.bot = {};
+      if (document.getElementById('cfgCopyMode')) globalSettings.bot.copy_mode = document.getElementById('cfgCopyMode').value;
+      if (document.getElementById('cfgActionDelay')) globalSettings.bot.action_delay = parseFloat(document.getElementById('cfgActionDelay').value) || 2.0;
+      if (document.getElementById('cfgMirrorEdits')) globalSettings.bot.mirror_edits = document.getElementById('cfgMirrorEdits').checked;
+      if (document.getElementById('cfgAutoStart')) globalSettings.bot.auto_start = document.getElementById('cfgAutoStart').checked;
+      globalSettings.bot.remove_images = removeImagesSetting;
+
+      if (!globalSettings.app) globalSettings.app = {};
+      const envSelect = document.getElementById('cfgEnvironment');
+      if (envSelect) globalSettings.app.environment = envSelect.value;
+
+      if (!globalSettings.customizations) globalSettings.customizations = {};
+      globalSettings.customizations.remove_images = removeImagesSetting;
+      globalSettings.customizations.replace_all_urls = document.getElementById('chkReplaceAllUrls').checked;
+      globalSettings.customizations.global_replacement_url = document.getElementById('globalReplacementUrl').value.trim();
+      globalSettings.customizations.remove_all_urls = document.getElementById('chkRemoveAllUrls').checked;
+
+      globalSettings.customizations.replace_all_usernames = document.getElementById('chkReplaceAllUsernames').checked;
+      globalSettings.customizations.global_replacement_username = document.getElementById('globalReplacementUsername').value.trim();
+      globalSettings.customizations.remove_all_usernames = document.getElementById('chkRemoveAllUsernames').checked;
+
+      globalSettings.customizations.header = document.getElementById('customHeader').value;
+      globalSettings.customizations.footer = document.getElementById('customFooter').value;
+
+      globalSettings.customizations.blacklist_keywords = document.getElementById('blacklistKeywords').value
+        .split(',').map(s => s.trim()).filter(Boolean);
+      globalSettings.customizations.whitelist_keywords = document.getElementById('whitelistKeywords').value
+        .split(',').map(s => s.trim()).filter(Boolean);
+
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(globalSettings)
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Settings saved & synced successfully!', 'success');
+          fetchStatus();
+        } else {
+          showToast('Error: ' + data.error, 'error');
+        }
+      } catch (e) {
+        showToast('Network error saving settings', 'error');
+      }
+    }
+
+    // 7. Render Environment Export Tab Logic
+    async function fetchRenderEnv() {
+      try {
+        const res = await fetch('/api/render-env');
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('renderEnvOutput').value = data.env_text;
+        }
+      } catch (e) {
+        console.error('Error loading render env:', e);
+      }
+    }
+
+    function copyRenderEnvText() {
+      const text = document.getElementById('renderEnvOutput').value;
+      if (!text) {
+        showToast('No environment text to copy', 'error');
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Render Environment block copied!', 'success');
+      }).catch(() => {
+        const ta = document.getElementById('renderEnvOutput');
+        ta.select();
+        document.execCommand('copy');
+        showToast('Render Environment block copied!', 'success');
+      });
+    }
+
+    // 8. Bot Engine Controls
+    async function startBot() {
+      const btn = document.getElementById('btnStartBot');
+      if (btn) btn.disabled = true;
+      showToast('Starting bot engine...', 'info');
+      try {
+        const res = await fetch('/api/bot/start', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Bot started successfully!', 'success');
+          if (data.status_data) updateStatusUI(data.status_data);
+        } else {
+          showToast('Start failed: ' + (data.error || 'Check credentials'), 'error');
+        }
+      } catch (e) {
+        showToast('Network error starting bot', 'error');
+      }
+      fetchStatus();
+    }
+
+    async function stopBot() {
+      const btn = document.getElementById('btnStopBot');
+      if (btn) btn.disabled = true;
+      showToast('Stopping bot...', 'info');
+      try {
+        const res = await fetch('/api/bot/stop', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Bot stopped.', 'info');
+          if (data.status_data) updateStatusUI(data.status_data);
+        } else {
+          showToast('Stop error: ' + (data.error || 'Unknown'), 'error');
+        }
+      } catch (e) {
+        showToast('Network error stopping bot', 'error');
+      }
+      fetchStatus();
+    }
+
+    async function restartBot() {
+      showToast('Restarting bot...', 'info');
+      try {
+        const res = await fetch('/api/bot/restart', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Bot restarted successfully.', 'success');
+          if (data.status_data) updateStatusUI(data.status_data);
+        } else {
+          showToast('Restart failed: ' + (data.error || 'Unknown'), 'error');
+        }
+      } catch (e) {
+        showToast('Network error restarting bot', 'error');
+      }
+      fetchStatus();
+    }
+
+    // 9. Simulator
+    function loadSampleText(type) {
+      if (type === 'promo') {
+        document.getElementById('simInputText').value = 
+`🔥 HUGE CASINO BONUSES AVAILABLE NOW!
+Register today and claim 200% match bonus on first deposit.
+Contact @source_admin for instant withdrawal support.
+Visit: https://t.me/original_source_link or www.betpromo.com/join`;
+      } else if (type === 'signal') {
+        document.getElementById('simInputText').value =
+`🎯 VIP DAILY SIGNAL
+Pair: BTC/USDT
+Entry: 65,400 - 65,800
+Target 1: 67,000
+Target 2: 68,500
+Stop Loss: 64,200
+Admin support: @vip_signals_owner | https://t.me/signals_channel`;
+      }
+      runSimulation();
+    }
+
+    async function runSimulation() {
+      const text = document.getElementById('simInputText').value;
+      const simRemoveImg = document.getElementById('simRemoveImages')?.checked || false;
+
+      // Update Simulator Media Badge immediately
+      const mediaBadge = document.getElementById('simMediaResultBadge');
+      if (mediaBadge) {
+        if (simRemoveImg) {
+          mediaBadge.innerText = '✂️ Images Stripped (Caption Only)';
+          mediaBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 font-bold';
+        } else {
+          mediaBadge.innerText = '🖼️ Media Preserved (Auto-Post)';
+          mediaBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 font-bold';
+        }
+      }
+
+      const simImgBadge = document.getElementById('simImgStatusBadge');
+      if (simImgBadge) {
+        if (simRemoveImg) {
+          simImgBadge.innerText = 'Images Stripped';
+          simImgBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 font-mono font-bold';
+        } else {
+          simImgBadge.innerText = 'Auto-Post Media';
+          simImgBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 font-mono font-bold';
+        }
+      }
+
+      const cust = {
+        replace_all_urls: document.getElementById('chkReplaceAllUrls').checked,
+        global_replacement_url: document.getElementById('globalReplacementUrl').value.trim(),
+        remove_all_urls: document.getElementById('chkRemoveAllUrls').checked,
+        url_rules: globalSettings.customizations?.url_rules || [],
+        replace_all_usernames: document.getElementById('chkReplaceAllUsernames').checked,
+        global_replacement_username: document.getElementById('globalReplacementUsername').value.trim(),
+        remove_all_usernames: document.getElementById('chkRemoveAllUsernames').checked,
+        username_rules: globalSettings.customizations?.username_rules || [],
+        header: document.getElementById('customHeader').value,
+        footer: document.getElementById('customFooter').value,
+        blacklist_keywords: document.getElementById('blacklistKeywords').value.split(',').map(s => s.trim()).filter(Boolean),
+        whitelist_keywords: document.getElementById('whitelistKeywords').value.split(',').map(s => s.trim()).filter(Boolean),
+        remove_images: simRemoveImg
+      };
+
+      try {
+        const res = await fetch('/api/preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, customizations: cust })
+        });
+        const data = await res.json();
+        
+        const badge = document.getElementById('simFilterBadge');
+        if (data.allowed) {
+          badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold';
+          badge.innerText = 'Passed Filter';
+        } else {
+          badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-bold';
+          badge.innerText = 'Blocked: ' + data.filter_reason;
+        }
+
+        let outputPreview = data.transformed || '';
+        if (simRemoveImg && !outputPreview.trim()) {
+          outputPreview = '(Post contained only media. With "Remove Images" active, message is skipped cleanly.)';
+        } else if (!outputPreview.trim()) {
+          outputPreview = '(Empty message)';
+        }
+        document.getElementById('simOutputPreview').innerText = outputPreview;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // 10. Discover Channels Modal
+    async function openDiscoverModal() {
+      document.getElementById('discoverModal').classList.remove('hidden');
+      const list = document.getElementById('discoveredChannelsList');
+      list.innerHTML = '<div class="text-center text-gray-400 text-xs py-8"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Querying Telegram for your channels...</div>';
+
+      try {
+        const res = await fetch('/api/dialogs');
+        const data = await res.json();
+        if (!data.success) {
+          list.innerHTML = `<div class="text-center text-rose-400 text-xs py-8">${data.error || 'Please start the bot first.'}</div>`;
+          return;
+        }
+
+        if (!data.dialogs || data.dialogs.length === 0) {
+          list.innerHTML = '<div class="text-center text-gray-400 text-xs py-8">No channels found.</div>';
+          return;
+        }
+
+        list.innerHTML = data.dialogs.map(d => `
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-gray-900 light:bg-gray-100 border border-gray-800 light:border-gray-200">
+            <div>
+              <div class="text-xs font-bold text-white light:text-gray-900">${d.title}</div>
+              <div class="text-[10px] text-gray-400 light:text-gray-600 font-mono">${d.username || 'Private ID: ' + d.id}</div>
+            </div>
+            <div class="flex gap-1.5">
+              <button onclick="addDiscoveredChannel('${d.username || d.id}', 'source')" class="px-2.5 py-1 bg-cyan-600/20 hover:bg-cyan-600 text-cyan-300 hover:text-white rounded-lg text-xs font-bold transition">
+                + Source
+              </button>
+              <button onclick="addDiscoveredChannel('${d.username || d.id}', 'dest')" class="px-2.5 py-1 bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white rounded-lg text-xs font-bold transition">
+                + Dest
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = '<div class="text-center text-rose-400 text-xs py-8">Error loading dialogs.</div>';
+      }
+    }
+
+    function closeDiscoverModal() {
+      document.getElementById('discoverModal').classList.add('hidden');
+    }
+
+    function addDiscoveredChannel(idOrUsername, target) {
+      if (target === 'source') {
+        if (!globalSettings.channels.sources.includes(idOrUsername)) {
+          globalSettings.channels.sources.push(idOrUsername);
+          renderChannelLists(globalSettings.channels);
+          showToast(`Added ${idOrUsername} to Sources`, 'success');
+        }
+      } else {
+        if (!globalSettings.channels.destinations.includes(idOrUsername)) {
+          globalSettings.channels.destinations.push(idOrUsername);
+          renderChannelLists(globalSettings.channels);
+          showToast(`Added ${idOrUsername} to Destinations`, 'success');
+        }
+      }
+    }
+
+    // 11. Live Logs WebSocket
+    let logWs = null;
+    let appBooted = false;
+    function connectLogsWs() {
+      if (!appBooted) return;
+      const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      logWs = new WebSocket(`${proto}//${window.location.host}/ws/logs`);
+      const terminal = document.getElementById('logTerminal');
+
+      logWs.onmessage = (event) => {
+        try {
+          const log = JSON.parse(event.data);
+          const line = document.createElement('div');
+
+          let color = 'text-gray-300';
+          if (log.level === 'ERROR') color = 'text-rose-400 font-bold';
+          else if (log.level === 'WARNING') color = 'text-amber-400';
+          else if (log.level === 'INFO') color = 'text-cyan-300';
+
+          line.className = 'leading-relaxed text-[11px]';
+          const stamp = document.createElement('span');
+          stamp.className = 'text-gray-500';
+          stamp.textContent = `[${log.time}] `;
+          const msg = document.createElement('span');
+          msg.className = color;
+          msg.textContent = log.message;   // textContent: log lines may contain channel titles
+          line.append(stamp, msg);
+          terminal.appendChild(line);
+
+          if (document.getElementById('chkAutoScroll').checked) {
+            terminal.scrollTop = terminal.scrollHeight;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      };
+
+      logWs.onclose = () => {
+        if (appBooted) setTimeout(connectLogsWs, 3000);
+      };
+    }
+
+    async function clearLogs() {
+      document.getElementById('logTerminal').innerHTML = '';
+      await postJson('/api/logs/clear');
+      showToast('Logs cleared', 'info');
+    }
+
+    // ================= 12. Small helpers =================
+    const byId = (id) => document.getElementById(id);
+
+    function setBusy(id, busy) {
+      const el = byId(id);
+      if (!el) return;
+      el.disabled = busy;
+      el.classList.toggle('opacity-60', busy);
+      el.classList.toggle('cursor-wait', busy);
+    }
+
+    async function postJson(url, body) {
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body || {})
+        });
+        let data = {};
+        try { data = await res.json(); } catch (_) {}
+        return data;
+      } catch (e) {
+        return { success: false, error: 'Network error. Check your connection and try again.' };
+      }
+    }
+
+    // ================= 13. Dashboard sign-in =================
+    const nativeFetch = window.fetch.bind(window);
+    window.fetch = async (...args) => {
+      const res = await nativeFetch(...args);
+      const url = typeof args[0] === 'string' ? args[0] : ((args[0] && args[0].url) || '');
+      if (res.status === 401 && !url.includes('/api/auth/')) showAuthGate('login');
+      return res;
+    };
+
+    let statusTimer = null;
+    function startPolling() { if (!statusTimer) statusTimer = setInterval(fetchStatus, 3000); }
+    function stopPolling() {
+      clearInterval(statusTimer);
+      statusTimer = null;
+      appBooted = false;
+      if (logWs) { try { logWs.close(); } catch (_) {} logWs = null; }
+    }
+
+    function bootApp() {
+      appBooted = true;
+      fetchSettings();
+      fetchStatus();
+      connectLogsWs();
+      startPolling();
+    }
+
+    function showAuthGate(mode) {
+      stopPolling();
+      const gate = byId('authGate');
+      const isSetup = mode === 'setup';
+      gate.dataset.mode = mode;
+      byId('authTitle').innerText = isSetup ? 'Create your dashboard password' : 'Sign in to TeleMirror';
+      byId('authSubtitle').innerText = isSetup
+        ? 'This password protects your dashboard and Telegram session. Choose at least 8 characters.'
+        : 'Enter your dashboard password to continue.';
+      byId('authConfirmWrap').classList.toggle('hidden', !isSetup);
+      byId('authSubmitLabel').innerText = isSetup ? 'Create Password & Continue' : 'Sign In';
+      byId('authPassword').autocomplete = isSetup ? 'new-password' : 'current-password';
+      byId('authError').classList.add('hidden');
+      gate.classList.remove('hidden');
+      setTimeout(() => byId('authPassword').focus(), 50);
+    }
+
+    function hideAuthGate() {
+      byId('authGate').classList.add('hidden');
+      byId('authPassword').value = '';
+      byId('authConfirm').value = '';
+    }
+
+    function showAuthError(msg) {
+      const el = byId('authError');
+      el.innerText = msg;
+      el.classList.remove('hidden');
+    }
+
+    async function submitAuth(ev) {
+      ev.preventDefault();
+      const mode = byId('authGate').dataset.mode;
+      const password = byId('authPassword').value;
+      if (!password) return showAuthError('Enter a password.');
+      if (mode === 'setup' && password !== byId('authConfirm').value) return showAuthError('Passwords do not match.');
+      setBusy('authSubmit', true);
+      const data = await postJson(mode === 'setup' ? '/api/auth/setup' : '/api/auth/login', { password });
+      setBusy('authSubmit', false);
+      if (data.success) {
+        hideAuthGate();
+        bootApp();
+      } else if (data.error === 'setup_required') {
+        showAuthGate('setup');
+      } else {
+        showAuthError(data.error || 'Sign-in failed.');
+      }
+    }
+
+    async function signOut() {
+      await postJson('/api/auth/logout');
+      stopPolling();
+      location.reload();
+    }
+
+    async function initAuth() {
+      try {
+        const res = await nativeFetch('/api/auth/state');
+        const state = await res.json();
+        if (state.authenticated) bootApp();
+        else showAuthGate(state.setup_required ? 'setup' : 'login');
+      } catch (e) {
+        showAuthGate('login');
+      }
+    }
+
+    // ================= 14. Account status in the UI =================
+    function refreshAccountUI(data) {
+      // Setup banner on the overview page
+      const banner = byId('setupBanner');
+      if (banner) banner.classList.toggle('hidden', !data.setup_required);
+
+      // Production / Development badge
+      const badge = byId('envBadge');
+      if (badge && data.environment) {
+        const dev = data.environment === 'development';
+        badge.innerText = dev ? 'DEV' : 'PROD';
+        badge.title = dev ? 'Development mode: verbose logs and detailed errors' : 'Production mode';
+        badge.className = 'hidden sm:inline text-[10px] font-black tracking-wider px-2 py-1 rounded-full border ' +
+          (dev ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30');
+      }
+
+      // Sidebar: show the saved account even while the engine is stopped
+      if (data.configured && data.status !== 'running') {
+        const acc = data.account || {};
+        const name = acc.first_name || 'Telegram account';
+        const handle = acc.username ? '@' + acc.username : 'Engine offline';
+        if (byId('sideAccountName')) byId('sideAccountName').innerText = name;
+        if (byId('sideAccountHandle')) byId('sideAccountHandle').innerText = handle;
+      } else if (data.setup_required) {
+        if (byId('sideAccountName')) byId('sideAccountName').innerText = 'Not connected';
+        if (byId('sideAccountHandle')) byId('sideAccountHandle').innerText = 'Log in from Settings';
+      }
+
+      // Settings → Telegram Login card
+      const connected = Boolean(data.configured);
+      byId('tgConnected').classList.toggle('hidden', !connected);
+      byId('tgWizard').classList.toggle('hidden', connected);
+      if (!connected) return;
+
+      const acc = data.user_info || data.account || {};
+      const isBot = data.bot_mode === 'bot_token' || Boolean(acc.is_bot);
+      byId('tgAccName').innerText = acc.first_name || (isBot ? 'Telegram Bot' : 'Telegram Account');
+      byId('tgAccHandle').innerText = acc.username ? '@' + acc.username : (acc.id ? 'ID ' + acc.id : '');
+      byId('tgAccPhone').innerText = isBot ? 'Bot API token' : (acc.phone ? '+' + String(acc.phone).replace(/^\+/, '') : '');
+      byId('tgAccMode').innerText = isBot ? 'Bot Token' : 'Userbot';
+      byId('tgCopySessionBtn').classList.toggle('hidden', isBot);
+
+      const chips = {
+        running:  ['Connected', 'bg-emerald-500/15 text-emerald-400'],
+        starting: ['Connecting…', 'bg-yellow-500/15 text-yellow-400'],
+        error:    ['Needs attention', 'bg-rose-500/15 text-rose-400'],
+        stopped:  ['Stopped', 'bg-gray-500/15 text-gray-400']
+      };
+      const [label, cls] = chips[data.status] || chips.stopped;
+      const chip = byId('tgAccStatus');
+      chip.innerText = label;
+      chip.className = 'text-[10px] px-2 py-0.5 rounded-full font-bold ' + cls;
+
+      const err = byId('tgAccError');
+      const hasErr = data.status === 'error' && data.error_message;
+      err.innerText = hasErr ? data.error_message : '';
+      err.classList.toggle('hidden', !hasErr);
+    }
+
+    // ================= 15. Telegram login wizard =================
+    function tgShowStep(step) {
+      ['creds', 'code', 'password'].forEach(s => byId('tgStep_' + s).classList.toggle('hidden', s !== step));
+      const current = { creds: 1, code: 2, password: 3 }[step];
+      [1, 2, 3].forEach(n => {
+        byId('tgDot' + n).className = 'w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center flex-shrink-0 ' +
+          (n < current ? 'bg-emerald-500 text-white' : n === current ? 'bg-cyan-500 text-white' : 'bg-gray-700 text-gray-400');
+      });
+      tgError('');
+      const focusId = { creds: 'tgApiId', code: 'tgCode', password: 'tgPassword' }[step];
+      setTimeout(() => { const el = byId(focusId); if (el && !el.value) el.focus(); }, 50);
+    }
+
+    function tgError(msg) {
+      const el = byId('tgError');
+      el.innerText = msg || '';
+      el.classList.toggle('hidden', !msg);
+    }
+
+    async function tgSendCode() {
+      tgError('');
+      setBusy('tgSendBtn', true);
+      const d = await postJson('/api/telegram/send-code', {
+        api_id: byId('tgApiId').value.trim(),
+        api_hash: byId('tgApiHash').value.trim(),
+        phone: byId('tgPhone').value.trim()
+      });
+      setBusy('tgSendBtn', false);
+      if (d.success) {
+        byId('tgCodeHint').innerText = `We sent a login code to ${d.delivery} for ${d.phone}.`;
+        byId('tgCode').value = '';
+        tgShowStep('code');
+        showToast('Login code sent', 'success');
+      } else {
+        tgError(d.error || 'Could not send the login code.');
+      }
+    }
+
+    async function tgVerifyCode() {
+      tgError('');
+      setBusy('tgCodeBtn', true);
+      const d = await postJson('/api/telegram/verify-code', { code: byId('tgCode').value });
+      setBusy('tgCodeBtn', false);
+      if (d.success && d.step === 'password') {
+        byId('tgPassword').value = '';
+        tgShowStep('password');
+        showToast('Two-step verification is enabled. Enter your password.', 'info');
+      } else if (d.success) {
+        tgConnected(d);
+      } else {
+        if (d.step === 'idle') tgShowStep('creds');
+        tgError(d.error || 'Could not verify the code.');
+      }
+    }
+
+    async function tgVerifyPassword() {
+      tgError('');
+      setBusy('tgPasswordBtn', true);
+      const d = await postJson('/api/telegram/verify-password', { password: byId('tgPassword').value });
+      setBusy('tgPasswordBtn', false);
+      if (d.success) {
+        tgConnected(d);
+      } else {
+        if (d.step === 'idle') tgShowStep('creds');
+        tgError(d.error || 'Could not verify the password.');
+      }
+    }
+
+    async function tgCancel() {
+      await postJson('/api/telegram/cancel');
+      byId('tgCode').value = '';
+      byId('tgPassword').value = '';
+      tgShowStep('creds');
+    }
+
+    async function tgConnectBot() {
+      tgError('');
+      setBusy('tgBotBtn', true);
+      const d = await postJson('/api/telegram/bot-token', {
+        api_id: byId('tgApiId').value.trim(),
+        api_hash: byId('tgApiHash').value.trim(),
+        bot_token: byId('tgBotToken').value.trim()
+      });
+      setBusy('tgBotBtn', false);
+      if (d.success) {
+        byId('tgBotToken').value = '';
+        tgConnected(d);
+      } else {
+        tgError(d.error || 'Could not connect the bot.');
+      }
+    }
+
+    function tgConnected(d) {
+      const name = (d.account && d.account.first_name) || 'your account';
+      showToast(`Connected as ${name}`, 'success');
+      if (d.engine_status === 'error' && d.engine_error) showToast(d.engine_error, 'error');
+      ['tgCode', 'tgPassword', 'tgApiHash'].forEach(id => { byId(id).value = ''; });
+      tgShowStep('creds');
+      fetchSettings();
+      fetchStatus();
+    }
+
+    async function copySessionString() {
+      try {
+        const res = await fetch('/api/session-string');
+        const d = await res.json();
+        if (!(d.success && d.session_string)) return showToast(d.error || 'No session to export yet.', 'error');
+        await navigator.clipboard.writeText(d.session_string);
+        showToast('Session string copied. Add it to Render as SESSION_STRING to keep this login after restarts.', 'success');
+      } catch (e) {
+        showToast('Could not copy the session string.', 'error');
+      }
+    }
+
+    // ================= 16. Disconnect / reset dialogs =================
+    let dangerState = null;
+
+    function openDanger(opts) {
+      dangerState = opts;
+      byId('dangerTitle').innerText = opts.title;
+      byId('dangerMessage').innerText = opts.message;
+      byId('dangerError').classList.add('hidden');
+
+      byId('dangerCheckWrap').classList.toggle('hidden', !opts.checkboxLabel);
+      byId('dangerCheckLabel').innerText = opts.checkboxLabel || '';
+      byId('dangerCheck').checked = opts.checkboxDefault !== false;
+
+      byId('dangerWordWrap').classList.toggle('hidden', !opts.requireWord);
+      byId('dangerWord').innerText = opts.requireWord || '';
+      byId('dangerInput').value = '';
+
+      byId('dangerConfirmBtn').innerText = opts.confirmText || 'Confirm';
+      byId('dangerConfirmBtn').classList.remove('hidden');
+      byId('dangerCancelBtn').innerText = 'Cancel';
+      byId('dangerResult').classList.add('hidden');
+      byId('dangerModal').classList.remove('hidden');
+    }
+
+    function closeDanger() {
+      byId('dangerModal').classList.add('hidden');
+      dangerState = null;
+    }
+
+    async function runDanger() {
+      if (!dangerState) return;
+      const opts = dangerState;
+      if (opts.requireWord && byId('dangerInput').value.trim().toUpperCase() !== opts.requireWord) {
+        const err = byId('dangerError');
+        err.innerText = `Type ${opts.requireWord} to confirm.`;
+        err.classList.remove('hidden');
+        return;
+      }
+      setBusy('dangerConfirmBtn', true);
+      const result = await opts.onConfirm(byId('dangerCheck').checked);
+      setBusy('dangerConfirmBtn', false);
+
+      if (!result || !result.success) {
+        const err = byId('dangerError');
+        err.innerText = (result && result.error) || 'Something went wrong.';
+        err.classList.remove('hidden');
+        return;
+      }
+      // Success: show the outcome (including env-var warnings) instead of closing silently.
+      const lines = [];
+      if (result.terminated) lines.push('The Telegram session was revoked.');
+      if (result.note) lines.push(result.note);
+      if (result.removed_files && result.removed_files.length) lines.push('Removed local files: ' + result.removed_files.join(', ') + '.');
+      if (result.env_still_set && result.env_still_set.length) {
+        lines.push('Still set in your host Environment: ' + result.env_still_set.join(', ') +
+          '. Remove them in Render → Environment, otherwise they will be applied again on the next restart.');
+      }
+      byId('dangerResultText').innerText = (opts.doneMessage || 'Done.') + (lines.length ? '\n\n' + lines.join('\n') : '');
+      byId('dangerResult').classList.remove('hidden');
+      byId('dangerCheckWrap').classList.add('hidden');
+      byId('dangerWordWrap').classList.add('hidden');
+      byId('dangerConfirmBtn').classList.add('hidden');
+      byId('dangerCancelBtn').innerText = 'Close';
+    }
+
+    function confirmDisconnect() {
+      openDanger({
+        title: 'Disconnect this account?',
+        message: 'Mirroring stops and this Telegram account is removed from the app, so you can log in with a different one. Your channels and rules are kept.',
+        confirmText: 'Disconnect',
+        checkboxLabel: 'Also revoke the session on Telegram (recommended)',
+        checkboxDefault: true,
+        doneMessage: 'Account disconnected. You can log in with another account now.',
+        onConfirm: async (revoke) => {
+          const d = await postJson('/api/telegram/logout', { terminate: revoke });
+          if (d.success) { await fetchSettings(); await fetchStatus(); }
+          return d;
+        }
+      });
+    }
+
+    function confirmReset() {
+      openDanger({
+        title: 'Reset the whole app?',
+        message: 'This disconnects the account and permanently deletes the saved API credentials, channels, rules, counters and logs, returning the app to a fresh install. Your dashboard password is kept.',
+        confirmText: 'Reset Everything',
+        requireWord: 'RESET',
+        checkboxLabel: 'Also revoke the Telegram session',
+        checkboxDefault: true,
+        doneMessage: 'The app is back to a fresh state.',
+        onConfirm: async (revoke) => {
+          const d = await postJson('/api/reset', { confirm: 'RESET', terminate_session: revoke });
+          if (d.success) {
+            byId('logTerminal').innerHTML = '';
+            ['tgApiId', 'tgApiHash', 'tgPhone', 'tgCode', 'tgPassword', 'tgBotToken'].forEach(id => { byId(id).value = ''; });
+            tgShowStep('creds');
+            await fetchSettings();
+            await fetchStatus();
+          }
+          return d;
+        }
+      });
+    }
+
+    // ================= 17. Environment (production / development) =================
+    function onEnvChange() {
+      const sel = byId('cfgEnvironment');
+      if (!sel) return;
+      const dev = sel.value === 'development';
+      byId('envHelp').innerText = dev
+        ? 'Development: verbose DEBUG logs and detailed error messages. Use while testing, not on a public site.'
+        : 'Production: quiet INFO logs and generic error messages. Recommended for your live Render app.';
+    }
+
+    // Bootstrap
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initAuth();
+    });
+  </script>
+</body>
+</html>
